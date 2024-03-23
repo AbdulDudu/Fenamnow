@@ -1,4 +1,4 @@
-import { createChat, findChat } from "@/lib/data/chat";
+import { createChat, createChatToken, findChat } from "@/lib/data/chat";
 import { getProfileById } from "@/lib/data/profile";
 import {
   addToFavorites,
@@ -6,6 +6,7 @@ import {
   getPropertyById,
   removeFromFavorites
 } from "@/lib/data/property";
+import { chatClient } from "@/lib/helpers/chat";
 import { getPublicUrl } from "@/lib/helpers/supabase";
 import { useSession } from "@/lib/providers/session";
 import { HEIGHT, WIDTH } from "@/lib/utils/constants";
@@ -69,6 +70,12 @@ export default function PropertyDetailsScreen() {
     queryKey: ["property", id],
     queryFn: () => getPropertyById({ id: parseInt(id as string) })
   });
+
+  const { mutateAsync: createChatTokenMutation, isPending: isCreating } =
+    useMutation({
+      mutationKey: ["createChatToken"],
+      mutationFn: createChatToken
+    });
 
   const features = [
     {
@@ -567,18 +574,36 @@ export default function PropertyDetailsScreen() {
                   {session && propertyOwner?.data?.id !== session.user.id && (
                     <Button
                       width="50%"
-                      onPress={() =>
-                        !chatData?.data
-                          ? createChatMutation({
-                              // @ts-ignore
-                              receiver_id: propertyOwner?.data.id!,
-                              user_id: session?.user?.id!
-                            })
-                          : router.push(
-                              // @ts-ignore
-                              `/chats/${chatData?.data.id}?full_name=${propertyOwner?.data?.full_name}?avatar_url=${propertyOwner?.data?.avatar_url}`
-                            )
-                      }
+                      // onPress={() =>
+                      //   !chatData?.data
+                      //     ? createChatMutation({
+                      //         // @ts-ignore
+                      //         receiver_id: propertyOwner?.data.id!,
+                      //         user_id: session?.user?.id!
+                      //       })
+                      //     : router.push(
+                      //         // @ts-ignore
+                      //         `/chats/${chatData?.data.id}?full_name=${propertyOwner?.data?.full_name}?avatar_url=${propertyOwner?.data?.avatar_url}`
+                      //       )
+                      // }
+                      onPress={async () => {
+                        await createChatTokenMutation(
+                          propertyOwner?.data?.id as string
+                        )
+                          .then(async res => {
+                            const channel = chatClient.channel("messaging", {
+                              members: [
+                                propertyOwner?.data?.id as string,
+                                session?.user.id!
+                              ]
+                            });
+                            await channel.watch();
+                            console.log(channel);
+                          })
+                          .catch(err => {
+                            console.log(err);
+                          });
+                      }}
                     >
                       <ButtonIcon
                         mr="$1"

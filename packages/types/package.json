@@ -6,8 +6,8 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@fenamnow/eslint-config": "workspace:*",
-    "@fenamnow/typescript-config": "workspace:*",
+    "@fenamnow/eslint-config": "*",
+    "@fenamnow/typescript-config": "*",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.46",
     "typescript": "^5.3.3"

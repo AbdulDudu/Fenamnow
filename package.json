@@ -29,8 +29,8 @@
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.23.3",
-    "@fenamnow/eslint-config": "workspace:*",
-    "@fenamnow/typescript-config": "workspace:*",
+    "@fenamnow/eslint-config": "*",
+    "@fenamnow/typescript-config": "*",
     "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
     "@snaplet/copycat": "^5.0.0",
     "@snaplet/seed": "^0.89.4",

@@ -7,8 +7,8 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@fenamnow/eslint-config": "workspace:*",
-    "@fenamnow/typescript-config": "workspace:*",
+    "@fenamnow/eslint-config": "*",
+    "@fenamnow/typescript-config": "*",
     "@tailwindcss/typography": "^0.5.10",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.46",
@@ -70,7 +70,6 @@
     "vaul": "^0.9.0",
     "zod": "^3.22.4"
   },
-  "packageManager": "bun@1.0.15",
   "exports": {
     "./globals.css": "./src/globals.css",
     "./postcss.config": "./postcss.config.js",

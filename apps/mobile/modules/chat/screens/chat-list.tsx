@@ -1,37 +1,72 @@
+import { createChatToken } from "@/lib/data/chat";
+import { useChatClient } from "@/lib/hooks/use-chat-client";
+import { useChatContext } from "@/lib/providers/chat";
 import { useSession } from "@/lib/providers/session";
-import { Button, ButtonText } from "@gluestack-ui/themed";
-import React from "react";
-import { Text, View } from "react-native";
+import { Screen } from "@/modules/common/ui/screen";
+import ScreenProtector from "@/modules/common/ui/screen-protector";
+import { Button, ButtonText, Spinner, Text } from "@gluestack-ui/themed";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
+import React, { useEffect } from "react";
+import { ChannelList } from "stream-chat-expo";
 
 export default function ChatListScreen() {
   const { session } = useSession();
+  const { setChannel } = useChatContext();
+  const router = useRouter();
 
-  const getToken = async () => {
-    try {
-      const res = await fetch(
-        `${process.env.EXPO_PUBLIC_WEB_APP_URL}/api/chat/token`,
-        {
-          method: "POST",
-          body: JSON.stringify({ id: session?.user.id })
-        }
-      );
+  if (!session) {
+    return <ScreenProtector />;
+  }
 
-      if (!res.ok) {
-        throw new Error("Failed to get token");
-      }
+  const { data } = useQuery({
+    queryKey: ["createChatToken", session?.user.id],
+    queryFn: () => createChatToken(session?.user.id!)
+  });
 
-      const data = await res.json();
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    }
+  const { data: token } = useQuery({
+    queryKey: ["createdToken", data],
+    queryFn: () => data?.token,
+    enabled: !!data?.token
+  });
+
+  const { clientIsReady } = useChatClient({
+    session: session!,
+    token
+  });
+
+  const sort: any = {
+    last_message_at: -1
   };
+
+  if (!clientIsReady) {
+    return (
+      <Screen
+        edges={["bottom"]}
+        justifyContent="center"
+        px="$0"
+        gap="$4"
+        alignItems="center"
+      >
+        <Spinner size="large" />
+      </Screen>
+    );
+  }
   return (
-    <View>
-      <Text>ChatListScreen</Text>
-      <Button onPress={getToken}>
-        <ButtonText>Get token</ButtonText>
-      </Button>
-    </View>
+    <Screen px="$0" edges={[]}>
+      <ChannelList
+        onSelect={channel => {
+          setChannel(channel);
+          router.navigate("/chat");
+        }}
+        filters={{
+          members: {
+            $in: [session?.user?.id!]
+          }
+        }}
+        numberOfSkeletons={12}
+        sort={sort}
+      />
+    </Screen>
   );
 }

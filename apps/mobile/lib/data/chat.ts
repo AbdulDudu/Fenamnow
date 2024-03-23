@@ -232,3 +232,10 @@ export const blockChat = async ({
     .eq("chat_id", chat_id)
     .select();
 };
+
+export const createChatToken = async (id: Session["user"]["id"]) => {
+  return await fetch(`${process.env.EXPO_PUBLIC_WEB_APP_URL}/api/chat/token`, {
+    method: "POST",
+    body: JSON.stringify({ id })
+  }).then(async res => await res.json());
+};

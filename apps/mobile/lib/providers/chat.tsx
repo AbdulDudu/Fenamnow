@@ -1,13 +1,14 @@
-// AppContext.js
-
 import React, { useState } from "react";
+import { DeepPartial, DefaultStreamChatGenerics } from "stream-chat-expo";
 
-export const ChatContext = React.createContext({
-  channel: null,
-  setChannel: (channel: any) => {},
-  thread: null,
-  setThread: (thread: any) => {}
-});
+type ChatContextType = {
+  channel: any;
+  setChannel: (channel: any) => void;
+  thread: any;
+  setThread: (thread: any) => void;
+};
+
+export const ChatContext = React.createContext({} as ChatContextType);
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [channel, setChannel] = useState(null);

@@ -3,6 +3,7 @@ import { chatClient } from "@/lib/helpers/chat";
 import { ChatProvider } from "@/lib/providers/chat";
 import QueryProvider from "@/lib/providers/query";
 import { SessionProvider } from "@/lib/providers/session";
+import { HEIGHT } from "@/lib/utils/constants";
 import { Toasts } from "@backpackapp-io/react-native-toast";
 import {
   Inter_100Thin,
@@ -17,19 +18,23 @@ import {
   useFonts
 } from "@expo-google-fonts/inter";
 import { COLORMODES } from "@gluestack-style/react/lib/typescript/types";
-import { GluestackUIProvider } from "@gluestack-ui/themed";
-import messaging from "@react-native-firebase/messaging";
+import {
+  GluestackUIProvider,
+  useColorMode,
+  useToken
+} from "@gluestack-ui/themed";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider
 } from "@react-navigation/native";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Chat, OverlayProvider } from "stream-chat-expo";
+import type { DeepPartial, Theme } from "stream-chat-expo";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -38,11 +43,6 @@ export const unstable_settings = {
 };
 
 SplashScreen.preventAutoHideAsync();
-
-// Register background handler
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log("Message handled in the background!", remoteMessage);
-});
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -79,15 +79,11 @@ export default function RootLayout() {
           config={config}
           colorMode={colorScheme as COLORMODES}
         >
-          <OverlayProvider>
-            <QueryProvider>
-              <SessionProvider>
-                <ChatProvider>
-                  <RootLayoutNav />
-                </ChatProvider>
-              </SessionProvider>
-            </QueryProvider>
-          </OverlayProvider>
+          <QueryProvider>
+            <SessionProvider>
+              <RootLayoutNav />
+            </SessionProvider>
+          </QueryProvider>
           <Toasts />
         </GluestackUIProvider>
       </ThemeProvider>
@@ -96,59 +92,121 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  useEffect(() => {
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (!remoteMessage?.data?.url) {
-          return;
-        }
-        router.push(remoteMessage?.data?.url as any);
-      });
-    const unsubscribe = messaging().onNotificationOpenedApp(remoteMessage => {
-      if (!remoteMessage?.data?.url) {
-        return;
+  const colorMode = useColorMode();
+
+  const listLightBackgroundColor = useToken("colors", "secondary200");
+  const listMessengerLightBackgroundColor = useToken("colors", "secondary300");
+
+  const listDarkBackgroundColor = useToken("colors", "black");
+  const listMessengerDarkBackgroundColor = useToken("colors", "secondary800");
+
+  const chatTheme: DeepPartial<Theme> = {
+    channelListMessenger: {
+      flatList: {
+        backgroundColor:
+          colorMode == "light"
+            ? listMessengerLightBackgroundColor
+            : listMessengerDarkBackgroundColor
+      },
+      flatListContent: {
+        backgroundColor:
+          colorMode == "light"
+            ? listLightBackgroundColor
+            : listDarkBackgroundColor
       }
-      router.push(remoteMessage?.data?.url as any);
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+    },
+    channelPreview: {
+      container: {
+        backgroundColor:
+          colorMode == "light" ? "white" : listMessengerDarkBackgroundColor
+      },
+      title: {
+        color: colorMode == "light" ? "black" : "white"
+      }
+    },
+    channelListSkeleton: {
+      container: {
+        backgroundColor:
+          colorMode == "light"
+            ? listLightBackgroundColor
+            : listDarkBackgroundColor
+      },
+      // @ts-ignore
+      maskFillColor: colorMode == "light" ? "white" : "black",
+      background: {
+        backgroundColor:
+          colorMode == "light" ? "white" : listMessengerDarkBackgroundColor
+      }
+    },
+    messageList: {
+      container: {
+        backgroundColor:
+          colorMode == "light"
+            ? listLightBackgroundColor
+            : listDarkBackgroundColor
+      }
+    },
+    messageInput: {
+      container: {
+        backgroundColor:
+          colorMode == "light" ? "white" : listMessengerDarkBackgroundColor,
+        paddingBottom: HEIGHT * 0.03
+      },
+      inputBoxContainer: {
+        borderColor:
+          colorMode == "light"
+            ? listMessengerDarkBackgroundColor
+            : listMessengerLightBackgroundColor
+      }
+    }
+  };
 
   return (
-    <Stack
-      initialRouteName="splash"
-      screenOptions={{
-        headerBackTitleVisible: false,
-        headerTitleStyle: {
-          fontFamily: "Inter_600SemiBold"
-        }
+    <OverlayProvider
+      value={{
+        style: chatTheme
       }}
     >
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-      <Stack.Screen name="search" options={{ headerTitle: "Search" }} />
-      <Stack.Screen
-        name="settings"
-        options={{
-          headerShown: false
-        }}
-      />
-      <Stack.Screen
-        name="property/[id]"
-        options={{
-          headerTitle: "Property Details"
-        }}
-      />
-      <Stack.Screen
-        name="chats/[id]"
-        options={{
-          headerBackButtonMenuEnabled: true,
-          headerBackTitleVisible: false
-        }}
-      />
-    </Stack>
+      <Chat
+        // @ts-ignore
+        client={chatClient}
+      >
+        <ChatProvider>
+          <Stack
+            initialRouteName="splash"
+            screenOptions={{
+              headerBackTitleVisible: false,
+              headerTitleStyle: {
+                fontFamily: "Inter_600SemiBold"
+              }
+            }}
+          >
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+            <Stack.Screen name="search" options={{ headerTitle: "Search" }} />
+            <Stack.Screen
+              name="chat"
+              options={{
+                headerBackButtonMenuEnabled: true,
+                headerBackTitleVisible: false
+              }}
+            />
+            <Stack.Screen
+              name="settings"
+              options={{
+                headerShown: false
+              }}
+            />
+            <Stack.Screen
+              name="property/[id]"
+              options={{
+                headerTitle: "Property Details"
+              }}
+            />
+          </Stack>
+        </ChatProvider>
+      </Chat>
+    </OverlayProvider>
   );
 }
