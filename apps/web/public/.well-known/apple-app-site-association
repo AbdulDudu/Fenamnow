@@ -1,0 +1,23 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "5TQ6Z6557A.com.fenamnow.ios",
+        "paths": [
+          "/*"
+        ]
+      }
+    ]
+  },
+  "activitycontinuation": {
+    "apps": [
+      "5TQ6Z6557A.com.fenamnow.ios"
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "5TQ6Z6557A.com.fenamnow.ios"
+    ]
+  }
+}

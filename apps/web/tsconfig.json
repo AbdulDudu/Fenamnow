@@ -1,0 +1,20 @@
+{
+  "extends": "@fenamnow/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "next.config.js",
+    "**/*.js",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app/(auth)/agent-verification/page.jsx"
+  ],
+  "exclude": ["node_modules"]
+}

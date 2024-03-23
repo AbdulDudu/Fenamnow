@@ -1,0 +1,8 @@
+{
+  "extends": "@fenamnow/typescript-config/base.json",
+  "compilerOptions": {
+    "baseUrl": "."
+  },
+  "include": ["functions"],
+  "exclude": ["node_modules"]
+}
