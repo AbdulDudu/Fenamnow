@@ -1,11 +1,22 @@
 {
   "applinks": {
-    "apps": [],
     "details": [
       {
-        "appID": "5TQ6Z6557A.com.fenamnow.ios",
-        "paths": [
-          "/*"
+        "appIDs": [
+          "5TQ6Z6557A.com.fenamnow.ios"
+        ],
+        "components": [
+          {
+            "/property": "/property/*",
+            "comment": "Matches all property routes"
+          },
+          {
+            "/search": "/search/*",
+            "comment": "Matches all search routes"
+          },{
+            "/chat": "/chat/*",
+            "comment": "Matches all chat routes"
+          }
         ]
       }
     ]

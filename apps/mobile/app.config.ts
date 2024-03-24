@@ -59,7 +59,17 @@ export default (): ExpoConfig => ({
           {
             scheme: "https",
             host: "*.fenamnow.com",
-            pathPrefix: "/records"
+            pathPrefix: "/property"
+          },
+          {
+            scheme: "https",
+            host: "*.fenamnow.com",
+            pathPrefix: "/search"
+          },
+          {
+            scheme: "https",
+            host: "*.fenamnow.com",
+            pathPrefix: "/chat"
           }
         ],
         category: ["BROWSABLE", "DEFAULT"]

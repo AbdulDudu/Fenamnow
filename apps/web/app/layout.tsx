@@ -29,6 +29,9 @@ export const metadata: Metadata = {
         url: "/og-image.png"
       }
     ]
+  },
+  itunes: {
+    appId: "6472881076"
   }
 };
 
