@@ -574,18 +574,6 @@ export default function PropertyDetailsScreen() {
                   {session && propertyOwner?.data?.id !== session.user.id && (
                     <Button
                       width="50%"
-                      // onPress={() =>
-                      //   !chatData?.data
-                      //     ? createChatMutation({
-                      //         // @ts-ignore
-                      //         receiver_id: propertyOwner?.data.id!,
-                      //         user_id: session?.user?.id!
-                      //       })
-                      //     : router.push(
-                      //         // @ts-ignore
-                      //         `/chats/${chatData?.data.id}?full_name=${propertyOwner?.data?.full_name}?avatar_url=${propertyOwner?.data?.avatar_url}`
-                      //       )
-                      // }
                       onPress={async () => {
                         await createChatTokenMutation(
                           propertyOwner?.data?.id as string

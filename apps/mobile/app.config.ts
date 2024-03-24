@@ -27,8 +27,8 @@ export default (): ExpoConfig => ({
     usesAppleSignIn: true,
     bundleIdentifier: "com.fenamnow.ios",
     associatedDomains: ["applinks:fenamnow.com"],
-    // googleServicesFile: "./GoogleService-Info.plist",
-    googleServicesFile: process.env.GOOGLE_SERVICES_PLIST!,
+    googleServicesFile: "./GoogleService-Info.plist",
+    // googleServicesFile: process.env.GOOGLE_SERVICES_PLIST!,
     config: {
       usesNonExemptEncryption: false,
       googleMapsApiKey: process.env.GOOGLE_MAPS_IOS_API_KEY!
@@ -43,8 +43,8 @@ export default (): ExpoConfig => ({
       backgroundColor: "#0e96f8",
       foregroundImage: "./assets/adaptive-icon.png"
     },
-    // googleServicesFile: "./google-services.json",
-    googleServicesFile: process.env.GOOGLE_SERVICES_JSON!,
+    googleServicesFile: "./google-services.json",
+    // googleServicesFile: process.env.GOOGLE_SERVICES_JSON!,
     config: {
       googleMaps: {
         apiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY!
@@ -149,6 +149,11 @@ export default (): ExpoConfig => ({
         ios: {
           useFrameworks: "static",
           deploymentTarget: "15.0"
+        },
+        android: {
+          extraMavenRepos: [
+            "../../../../node_modules/@notifee/react-native/android/libs"
+          ]
         }
       }
     ]

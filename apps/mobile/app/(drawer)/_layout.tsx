@@ -4,16 +4,11 @@ import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
 import {
   HStack,
   Icon,
-  Pressable,
   Text,
-  Toast,
-  ToastDescription,
-  ToastTitle,
   useColorMode,
   useToast,
   VStack
 } from "@gluestack-ui/themed";
-import messaging from "@react-native-firebase/messaging";
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -24,7 +19,7 @@ import { router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import * as WebBrowser from "expo-web-browser";
 import { CopyrightIcon } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function DrawerLayout() {
   const { session, logout } = useSession();
@@ -52,42 +47,6 @@ export default function DrawerLayout() {
     let result = await WebBrowser.openBrowserAsync(`${url}/support`);
     setResult(result);
   };
-
-  const toast = useToast();
-
-  useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log(remoteMessage);
-      toast.show({
-        placement: "top",
-        avoidKeyboard: true,
-        render: ({ id }) => {
-          const toastId = "toast-" + id;
-          return (
-            <Toast nativeID={toastId} action="attention" variant="solid">
-              <Pressable
-                onPress={() => {
-                  toast.close(id);
-                  router.push(remoteMessage?.data?.url as any);
-                }}
-              >
-                <VStack space="xs">
-                  <ToastTitle>{remoteMessage.notification?.title}</ToastTitle>
-                  <ToastDescription>
-                    {remoteMessage.notification?.body}
-                  </ToastDescription>
-                </VStack>
-              </Pressable>
-            </Toast>
-          );
-        }
-      });
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   return (
     <Drawer

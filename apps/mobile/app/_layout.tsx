@@ -1,6 +1,6 @@
 import { config } from "@/config/gluestack-ui.config";
 import { chatClient } from "@/lib/helpers/chat";
-import { ChatProvider } from "@/lib/providers/chat";
+import { ChatProvider, useChatContext } from "@/lib/providers/chat";
 import QueryProvider from "@/lib/providers/query";
 import { SessionProvider } from "@/lib/providers/session";
 import { HEIGHT } from "@/lib/utils/constants";
@@ -28,21 +28,21 @@ import {
   DefaultTheme,
   ThemeProvider
 } from "@react-navigation/native";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Chat, OverlayProvider } from "stream-chat-expo";
 import type { DeepPartial, Theme } from "stream-chat-expo";
+
+SplashScreen.preventAutoHideAsync();
 
 export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
   initialRouteName: "(drawers)"
 };
-
-SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -93,6 +93,8 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorMode = useColorMode();
+  const { setChannel } = useChatContext();
+  const [initialChannelId, setInitialChannelId] = useState<string>();
 
   const listLightBackgroundColor = useToken("colors", "secondary200");
   const listMessengerLightBackgroundColor = useToken("colors", "secondary300");
@@ -170,6 +172,7 @@ function RootLayoutNav() {
       <Chat
         // @ts-ignore
         client={chatClient}
+        enableOfflineSupport
       >
         <ChatProvider>
           <Stack
