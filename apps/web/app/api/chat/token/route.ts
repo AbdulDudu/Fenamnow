@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     await client.upsertUser({
       id: userData.id,
-      role: userData.type || "user",
+      role: "user",
       name: userData.full_name || "",
       avatar_url: userData.avatar_url
     });
