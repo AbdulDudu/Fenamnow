@@ -28,7 +28,7 @@ import {
   DefaultTheme,
   ThemeProvider
 } from "@react-navigation/native";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
@@ -81,7 +81,9 @@ export default function RootLayout() {
         >
           <QueryProvider>
             <SessionProvider>
-              <RootLayoutNav />
+              <ChatProvider>
+                <RootLayoutNav />
+              </ChatProvider>
             </SessionProvider>
           </QueryProvider>
           <Toasts />
@@ -159,6 +161,9 @@ function RootLayoutNav() {
           colorMode == "light"
             ? listMessengerDarkBackgroundColor
             : listMessengerLightBackgroundColor
+      },
+      inputBox: {
+        color: colorMode == "light" ? "black" : "white"
       }
     }
   };
@@ -172,43 +177,40 @@ function RootLayoutNav() {
       <Chat
         // @ts-ignore
         client={chatClient}
-        enableOfflineSupport
       >
-        <ChatProvider>
-          <Stack
-            initialRouteName="splash"
-            screenOptions={{
-              headerBackTitleVisible: false,
-              headerTitleStyle: {
-                fontFamily: "Inter_600SemiBold"
-              }
+        <Stack
+          initialRouteName="splash"
+          screenOptions={{
+            headerBackTitleVisible: false,
+            headerTitleStyle: {
+              fontFamily: "Inter_600SemiBold"
+            }
+          }}
+        >
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+          <Stack.Screen name="search" options={{ headerTitle: "Search" }} />
+          <Stack.Screen
+            name="chat/[cid]/index"
+            options={{
+              headerBackButtonMenuEnabled: true,
+              headerBackTitleVisible: false
             }}
-          >
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-            <Stack.Screen name="search" options={{ headerTitle: "Search" }} />
-            <Stack.Screen
-              name="chat"
-              options={{
-                headerBackButtonMenuEnabled: true,
-                headerBackTitleVisible: false
-              }}
-            />
-            <Stack.Screen
-              name="settings"
-              options={{
-                headerShown: false
-              }}
-            />
-            <Stack.Screen
-              name="property/[id]"
-              options={{
-                headerTitle: "Property Details"
-              }}
-            />
-          </Stack>
-        </ChatProvider>
+          />
+          <Stack.Screen
+            name="settings"
+            options={{
+              headerShown: false
+            }}
+          />
+          <Stack.Screen
+            name="property/[id]"
+            options={{
+              headerTitle: "Property Details"
+            }}
+          />
+        </Stack>
       </Chat>
     </OverlayProvider>
   );

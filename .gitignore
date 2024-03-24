@@ -44,3 +44,6 @@ web-build/
 *.pem
 
 
+
+# Local Netlify folder
+.netlify

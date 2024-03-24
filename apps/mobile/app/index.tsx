@@ -4,6 +4,7 @@ import { AnimatedView } from "@/modules/common/ui/animated-view";
 import { Screen } from "@/modules/common/ui/screen";
 import { Center, Spinner, Text } from "@gluestack-ui/themed";
 import messaging from "@react-native-firebase/messaging";
+import * as Device from "expo-device";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
@@ -29,7 +30,7 @@ export default function SplashPage() {
       }
       if (session) {
         requestUserPermission().then(async enabled => {
-          if (enabled) {
+          if (enabled && Device.isDevice) {
             await messaging().registerDeviceForRemoteMessages();
             const token = await messaging().getToken();
             await supabase.from("profiles").upsert({

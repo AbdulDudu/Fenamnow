@@ -41,7 +41,7 @@ const Legal = async ({ params }: { params: { slug: string } }) => {
             <p>No Legal Found</p>
           ) : (
             <>
-              <div className="h-full w-[60%]">
+              <div className="h-full w-full lg:w-[60%]">
                 <h3>{legal.title}</h3>
                 <ArticleContent ARTICLE_CONTENT={legal?.content} />
               </div>

@@ -8,7 +8,7 @@ import { Button, ButtonText, Spinner, Text } from "@gluestack-ui/themed";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { ChannelList } from "stream-chat-expo";
+import { ChannelList, useChannelPreviewDisplayName } from "stream-chat-expo";
 
 export default function ChatListScreen() {
   const { session } = useSession();
@@ -21,18 +21,13 @@ export default function ChatListScreen() {
 
   const { data } = useQuery({
     queryKey: ["createChatToken", session?.user.id],
-    queryFn: () => createChatToken(session?.user.id!)
-  });
-
-  const { data: token } = useQuery({
-    queryKey: ["createdToken", data],
-    queryFn: () => data?.token,
-    enabled: !!data?.token
+    queryFn: () => createChatToken(session?.user.id!),
+    enabled: !!session
   });
 
   const { clientIsReady } = useChatClient({
     session: session!,
-    token
+    token: data?.token
   });
 
   const sort: any = {
@@ -52,12 +47,13 @@ export default function ChatListScreen() {
       </Screen>
     );
   }
+
   return (
     <Screen px="$0" edges={[]}>
       <ChannelList
         onSelect={channel => {
           setChannel(channel);
-          router.navigate("/chat");
+          router.navigate(`/chat/${channel.cid}`);
         }}
         filters={{
           members: {
