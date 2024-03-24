@@ -1,14 +1,7 @@
 import { useSession } from "@/lib/providers/session";
 import { HEIGHT } from "@/lib/utils/constants";
 import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
-import {
-  HStack,
-  Icon,
-  Text,
-  useColorMode,
-  useToast,
-  VStack
-} from "@gluestack-ui/themed";
+import { HStack, Icon, Text, useColorMode, VStack } from "@gluestack-ui/themed";
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -19,7 +12,6 @@ import { router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import * as WebBrowser from "expo-web-browser";
 import { CopyrightIcon } from "lucide-react-native";
-import { useState } from "react";
 
 export default function DrawerLayout() {
   const { session, logout } = useSession();
@@ -27,27 +19,21 @@ export default function DrawerLayout() {
 
   const url = process.env.EXPO_PUBLIC_WEB_APP_URL!;
 
-  const [result, setResult] = useState<WebBrowser.WebBrowserResult>();
-
   const goToPrivacyPolicy = async () => {
     let result = await WebBrowser.openBrowserAsync(
       `${url}/legal/privacy-policy`
     );
-    setResult(result);
   };
 
   const goToTermsOfService = async () => {
     let result = await WebBrowser.openBrowserAsync(
       `${url}/legal/terms-of-service`
     );
-    setResult(result);
   };
 
   const goToContact = async () => {
     let result = await WebBrowser.openBrowserAsync(`${url}/support`);
-    setResult(result);
   };
-
   return (
     <Drawer
       initialRouteName="(tabs)"

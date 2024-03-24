@@ -50,7 +50,21 @@ export default (): ExpoConfig => ({
         apiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY!
       }
     },
-    permissions: ["RECORD_AUDIO"]
+    permissions: ["RECORD_AUDIO"],
+    intentFilters: [
+      {
+        action: "VIEW",
+        autoVerify: true,
+        data: [
+          {
+            scheme: "https",
+            host: "*.fenamnow.com",
+            pathPrefix: "/records"
+          }
+        ],
+        category: ["BROWSABLE", "DEFAULT"]
+      }
+    ]
   },
   web: {
     favicon: "./assets/favicon.png"

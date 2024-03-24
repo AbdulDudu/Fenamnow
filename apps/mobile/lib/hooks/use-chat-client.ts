@@ -33,7 +33,7 @@ export const useChatClient = ({
     if (!chatClient.userID) {
       setupClient();
     }
-  }, [token, session]);
+  }, [token]);
 
   return {
     clientIsReady

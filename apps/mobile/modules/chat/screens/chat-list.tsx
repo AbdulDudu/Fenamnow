@@ -25,28 +25,28 @@ export default function ChatListScreen() {
     enabled: !!session
   });
 
-  const { clientIsReady } = useChatClient({
-    session: session!,
-    token: data?.token
-  });
+  // const { clientIsReady } = useChatClient({
+  //   session: session!,
+  //   token: data?.token
+  // });
 
   const sort: any = {
     last_message_at: -1
   };
 
-  if (!clientIsReady) {
-    return (
-      <Screen
-        edges={["bottom"]}
-        justifyContent="center"
-        px="$0"
-        gap="$4"
-        alignItems="center"
-      >
-        <Spinner size="large" />
-      </Screen>
-    );
-  }
+  // if (!clientIsReady) {
+  //   return (
+  //     <Screen
+  //       edges={["bottom"]}
+  //       justifyContent="center"
+  //       px="$0"
+  //       gap="$4"
+  //       alignItems="center"
+  //     >
+  //       <Spinner size="large" />
+  //     </Screen>
+  //   );
+  // }
 
   return (
     <Screen px="$0" edges={[]}>

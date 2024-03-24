@@ -1,4 +1,4 @@
-import { createChat, createChatToken, findChat } from "@/lib/data/chat";
+import { createChatToken, findChatChannel } from "@/lib/data/chat";
 import { getProfileById } from "@/lib/data/profile";
 import {
   addToFavorites,
@@ -8,6 +8,7 @@ import {
 } from "@/lib/data/property";
 import { chatClient } from "@/lib/helpers/chat";
 import { getPublicUrl } from "@/lib/helpers/supabase";
+import { useChatContext } from "@/lib/providers/chat";
 import { useSession } from "@/lib/providers/session";
 import { HEIGHT, WIDTH } from "@/lib/utils/constants";
 import { nFormatter } from "@/lib/utils/nFormatter";
@@ -62,6 +63,7 @@ export default function PropertyDetailsScreen() {
   const [videoModal, setVideoModal] = useState(false);
   const [photosModal, setPhotosModal] = useState(false);
   const colorMode = useColorMode();
+  const { setChannel } = useChatContext();
 
   const video = useRef<Video>(null);
   // const [status, setStatus] = useState({});
@@ -154,31 +156,14 @@ export default function PropertyDetailsScreen() {
   });
 
   const { data: chatData } = useQuery({
-    queryKey: ["chat", id],
+    queryKey: [id],
     staleTime: 500,
     enabled: !!propertyOwner?.data?.id,
     queryFn: () =>
-      findChat({
-        session: session!,
-        receiver_id: propertyOwner?.data?.id!
+      findChatChannel({
+        id: session?.user.id!,
+        owner_id: propertyOwner?.data?.id!
       })
-  });
-
-  const { mutate: createChatMutation } = useMutation({
-    mutationFn: createChat,
-    onSuccess: async data => {
-      console.log("Chat created: ", data);
-      queryClient.invalidateQueries({
-        queryKey: ["chats", session?.user.id]
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["chat", id]
-      });
-      router.push(
-        // @ts-ignore
-        `/chats/${data.data[0].chat_id}?full_name=${propertyOwner?.data?.full_name}&avatar_url=${propertyOwner?.data?.avatar_url}`
-      );
-    }
   });
 
   const onShare = async () => {
@@ -575,22 +560,46 @@ export default function PropertyDetailsScreen() {
                     <Button
                       width="50%"
                       onPress={async () => {
-                        await createChatTokenMutation(
-                          propertyOwner?.data?.id as string
-                        )
-                          .then(async res => {
-                            const channel = chatClient.channel("messaging", {
-                              members: [
-                                propertyOwner?.data?.id as string,
-                                session?.user.id!
-                              ]
-                            });
-                            await channel.watch();
-                            console.log(channel);
-                          })
-                          .catch(err => {
-                            console.log(err);
-                          });
+                        chatData
+                          ? (async () => {
+                              const channels = await chatClient.queryChannels(
+                                {
+                                  type: "messaging",
+                                  members: {
+                                    $in: [
+                                      session.user.id,
+                                      propertyOwner?.data?.id as string
+                                    ]
+                                  }
+                                },
+                                [{ last_message_at: -1 }],
+                                {
+                                  watch: true,
+                                  state: true
+                                }
+                              );
+                              setChannel(channels[0] as any);
+                              router.navigate(`/chat/${channels[0]?.cid}`);
+                            })()
+                          : await createChatTokenMutation(
+                              propertyOwner?.data?.id as string
+                            )
+                              .then(async res => {
+                                const channel = chatClient.channel(
+                                  "messaging",
+                                  {
+                                    members: [
+                                      propertyOwner?.data?.id as string,
+                                      session?.user.id!
+                                    ]
+                                  }
+                                );
+                                await channel.watch();
+                                console.log(channel);
+                              })
+                              .catch(err => {
+                                console.log(err);
+                              });
                       }}
                     >
                       <ButtonIcon
@@ -600,7 +609,7 @@ export default function PropertyDetailsScreen() {
                         as={SendIcon}
                       />
                       <ButtonText fontSize="$sm">
-                        {!chatData?.data ? "Send a message" : "Continue Chat"}
+                        {!chatData ? "Send a message" : "Continue Chat"}
                       </ButtonText>
                     </Button>
                   )}
