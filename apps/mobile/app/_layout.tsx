@@ -1,8 +1,9 @@
 import { config } from "@/config/gluestack-ui.config";
+import { createChatToken } from "@/lib/data/chat";
 import { chatClient } from "@/lib/helpers/chat";
 import { ChatProvider, useChatContext } from "@/lib/providers/chat";
 import QueryProvider from "@/lib/providers/query";
-import { SessionProvider } from "@/lib/providers/session";
+import { SessionProvider, useSession } from "@/lib/providers/session";
 import { HEIGHT } from "@/lib/utils/constants";
 import { Toasts } from "@backpackapp-io/react-native-toast";
 import {
@@ -28,6 +29,7 @@ import {
   DefaultTheme,
   ThemeProvider
 } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
@@ -95,6 +97,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorMode = useColorMode();
+  const { session } = useSession();
   const { setChannel } = useChatContext();
   const [initialChannelId, setInitialChannelId] = useState<string>();
 
@@ -167,6 +170,31 @@ function RootLayoutNav() {
       }
     }
   };
+
+  const { data } = useQuery({
+    queryKey: [session],
+    queryFn: () => createChatToken(session?.user.id!),
+    enabled: !!session
+  });
+
+  console.log(data?.token);
+
+  useEffect(() => {
+    const connectUser = async () => {
+      session &&
+        (await chatClient
+          .connectUser(
+            {
+              id: session?.user.id!,
+              name: session?.user.user_metadata.full_name
+            },
+            data?.token
+          )
+          .catch(error => console.error(error)));
+    };
+
+    connectUser();
+  }, [session]);
 
   return (
     <OverlayProvider

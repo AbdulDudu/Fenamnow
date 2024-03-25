@@ -1,4 +1,5 @@
 import { getPublicUrl } from "@/lib/helpers/supabase";
+import { useChatContext } from "@/lib/providers/chat";
 import { useSession } from "@/lib/providers/session";
 import { HEIGHT } from "@/lib/utils/constants";
 import { Feather, FontAwesome5, Octicons } from "@expo/vector-icons";
@@ -12,7 +13,6 @@ import {
 import { DrawerToggleButton } from "@react-navigation/drawer";
 import { Tabs, useRouter } from "expo-router";
 import { Platform, useColorScheme } from "react-native";
-import { enableScreens } from "react-native-screens";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome5>["name"];
@@ -25,7 +25,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const router = useRouter();
   const { session } = useSession();
-
+  const { unreadCount } = useChatContext();
   return (
     <Tabs
       screenOptions={{
@@ -84,12 +84,14 @@ export default function TabLayout() {
         options={{
           title: "Chat",
           tabBarIcon: ({ color }) => (
-            <Feather
-              color={color}
-              name="message-square"
-              size={28}
-              style={{ marginBottom: -3 }}
-            />
+            <>
+              <Feather
+                color={color}
+                name="message-square"
+                size={28}
+                style={{ marginBottom: -3 }}
+              />
+            </>
           )
         }}
       />

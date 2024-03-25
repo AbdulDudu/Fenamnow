@@ -158,7 +158,6 @@ export default function PropertyDetailsScreen() {
   const { data: chatData } = useQuery({
     queryKey: [id],
     staleTime: 500,
-    enabled: !!propertyOwner?.data?.id,
     queryFn: () =>
       findChatChannel({
         id: session?.user.id!,
@@ -559,9 +558,9 @@ export default function PropertyDetailsScreen() {
                   {session && propertyOwner?.data?.id !== session.user.id && (
                     <Button
                       width="50%"
-                      onPress={async () => {
+                      onPress={
                         chatData
-                          ? (async () => {
+                          ? async () => {
                               const channels = await chatClient.queryChannels(
                                 {
                                   type: "messaging",
@@ -580,27 +579,18 @@ export default function PropertyDetailsScreen() {
                               );
                               setChannel(channels[0] as any);
                               router.navigate(`/chat/${channels[0]?.cid}`);
-                            })()
-                          : await createChatTokenMutation(
-                              propertyOwner?.data?.id as string
-                            )
-                              .then(async res => {
-                                const channel = chatClient.channel(
-                                  "messaging",
-                                  {
-                                    members: [
-                                      propertyOwner?.data?.id as string,
-                                      session?.user.id!
-                                    ]
-                                  }
-                                );
-                                await channel.watch();
-                                console.log(channel);
-                              })
-                              .catch(err => {
-                                console.log(err);
+                            }
+                          : async () => {
+                              const channel = chatClient.channel("messaging", {
+                                members: [
+                                  propertyOwner?.data?.id as string,
+                                  session?.user.id!
+                                ]
                               });
-                      }}
+                              await channel.watch();
+                              console.log(channel);
+                            }
+                      }
                     >
                       <ButtonIcon
                         mr="$1"
