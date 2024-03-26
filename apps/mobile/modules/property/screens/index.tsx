@@ -6,8 +6,9 @@ import {
   getPropertyById,
   removeFromFavorites
 } from "@/lib/data/property";
-import { chatClient } from "@/lib/helpers/chat";
+import { getStreamChatClient } from "@/lib/helpers/getstream";
 import { getPublicUrl } from "@/lib/helpers/supabase";
+import { useChatClient } from "@/lib/hooks/use-chat-client";
 import { useChatContext } from "@/lib/providers/chat";
 import { useSession } from "@/lib/providers/session";
 import { HEIGHT, WIDTH } from "@/lib/utils/constants";
@@ -47,7 +48,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ResizeMode, Video } from "expo-av";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { capitalize } from "lodash";
+import { capitalize, property } from "lodash";
 import { useRef, useState } from "react";
 import { Alert, Modal, Platform, Share } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
@@ -65,19 +66,10 @@ export default function PropertyDetailsScreen() {
   const colorMode = useColorMode();
   const { setChannel } = useChatContext();
 
-  const video = useRef<Video>(null);
-  // const [status, setStatus] = useState({});
-
   const { data: propertyData, isPending } = useQuery({
     queryKey: ["property", id],
     queryFn: () => getPropertyById({ id: parseInt(id as string) })
   });
-
-  const { mutateAsync: createChatTokenMutation, isPending: isCreating } =
-    useMutation({
-      mutationKey: ["createChatToken"],
-      mutationFn: createChatToken
-    });
 
   const features = [
     {
@@ -156,13 +148,13 @@ export default function PropertyDetailsScreen() {
   });
 
   const { data: chatData } = useQuery({
-    queryKey: [id],
-    staleTime: 500,
+    queryKey: [id, propertyOwner?.data?.id!],
     queryFn: () =>
       findChatChannel({
-        id: session?.user.id!,
-        owner_id: propertyOwner?.data?.id!
-      })
+        id: propertyOwner?.data?.id!,
+        owner_id: session?.user.id!
+      }),
+    enabled: !!session
   });
 
   const onShare = async () => {
@@ -208,6 +200,7 @@ export default function PropertyDetailsScreen() {
       </Screen>
     );
   }
+
   return (
     <>
       <Stack.Screen
@@ -218,11 +211,12 @@ export default function PropertyDetailsScreen() {
             });
           }
         }}
+        // name="property/[id]"
         options={{
           headerTitle: "Property Details"
         }}
       />
-      <Screen edges={["bottom"]}>
+      <Screen>
         <ScrollView showsVerticalScrollIndicator={false} height="$full">
           {/* Address and actions */}
           <HStack
@@ -561,34 +555,38 @@ export default function PropertyDetailsScreen() {
                       onPress={
                         chatData
                           ? async () => {
-                              const channels = await chatClient.queryChannels(
-                                {
-                                  type: "messaging",
-                                  members: {
-                                    $in: [
-                                      session.user.id,
-                                      propertyOwner?.data?.id as string
-                                    ]
+                              await getStreamChatClient
+                                .queryChannels(
+                                  {
+                                    type: "messaging",
+                                    members: {
+                                      $in: [
+                                        session.user.id,
+                                        propertyOwner?.data?.id as string
+                                      ]
+                                    }
                                   }
-                                },
-                                [{ last_message_at: -1 }],
-                                {
-                                  watch: true,
-                                  state: true
-                                }
-                              );
-                              setChannel(channels[0] as any);
-                              router.navigate(`/chat/${channels[0]?.cid}`);
+                                  // [{ last_message_at: -1 }]
+                                )
+                                .then(res => {
+                                  setChannel(res[0] as any);
+                                  router.navigate(`/chat/${res[0]?.cid}`);
+                                })
+                                .catch(err => console.error(err));
                             }
                           : async () => {
-                              const channel = chatClient.channel("messaging", {
-                                members: [
-                                  propertyOwner?.data?.id as string,
-                                  session?.user.id!
-                                ]
-                              });
+                              const channel = getStreamChatClient.channel(
+                                "messaging",
+                                {
+                                  members: [
+                                    propertyOwner?.data?.id as string,
+                                    session?.user.id!
+                                  ]
+                                }
+                              );
                               await channel.watch();
-                              console.log(channel);
+                              setChannel(channel);
+                              router.navigate(`/chat/${channel?.cid}`);
                             }
                       }
                     >
@@ -599,7 +597,7 @@ export default function PropertyDetailsScreen() {
                         as={SendIcon}
                       />
                       <ButtonText fontSize="$sm">
-                        {!chatData ? "Send a message" : "Continue Chat"}
+                        {chatData ? "Continue Chat" : "Send a message"}
                       </ButtonText>
                     </Button>
                   )}

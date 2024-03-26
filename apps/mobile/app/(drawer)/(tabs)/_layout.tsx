@@ -1,5 +1,7 @@
+import { createChatToken } from "@/lib/data/chat";
+import { getStreamChatClient } from "@/lib/helpers/getstream";
 import { getPublicUrl } from "@/lib/helpers/supabase";
-import { useChatContext } from "@/lib/providers/chat";
+import { useChatClient } from "@/lib/hooks/use-chat-client";
 import { useSession } from "@/lib/providers/session";
 import { HEIGHT } from "@/lib/utils/constants";
 import { Feather, FontAwesome5, Octicons } from "@expo/vector-icons";
@@ -7,12 +9,17 @@ import {
   Avatar,
   AvatarFallbackText,
   AvatarImage,
+  Badge,
+  BadgeText,
   Pressable,
-  View
+  VStack
 } from "@gluestack-ui/themed";
 import { DrawerToggleButton } from "@react-navigation/drawer";
+import { useQuery } from "@tanstack/react-query";
 import { Tabs, useRouter } from "expo-router";
+import { useState } from "react";
 import { Platform, useColorScheme } from "react-native";
+import { useChatContext } from "stream-chat-expo";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome5>["name"];
@@ -25,7 +32,9 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const router = useRouter();
   const { session } = useSession();
-  const { unreadCount } = useChatContext();
+
+  const { client } = useChatContext();
+
   return (
     <Tabs
       screenOptions={{
@@ -84,14 +93,27 @@ export default function TabLayout() {
         options={{
           title: "Chat",
           tabBarIcon: ({ color }) => (
-            <>
+            <VStack>
+              <Badge
+                h={22}
+                w={22}
+                bg="$red600"
+                borderRadius="$full"
+                mb={-14}
+                mr={-14}
+                zIndex={1}
+                variant="solid"
+                alignSelf="flex-end"
+              >
+                {/* <BadgeText color="$white">{unreadCount}</BadgeText> */}
+              </Badge>
               <Feather
                 color={color}
                 name="message-square"
                 size={28}
                 style={{ marginBottom: -3 }}
               />
-            </>
+            </VStack>
           )
         }}
       />

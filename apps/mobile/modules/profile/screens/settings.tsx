@@ -2,6 +2,7 @@ import { useSession } from "@/lib/providers/session";
 import { WIDTH } from "@/lib/utils/constants";
 import { Screen } from "@/modules/common/ui/screen";
 import { useColorMode } from "@gluestack-style/react";
+import { Stack } from "expo-router";
 import { useState } from "react";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import AccountSettings from "../components/settings/account";
@@ -36,14 +37,17 @@ export default function SettingsScreen() {
   );
 
   return (
-    <Screen edges={["bottom"]} paddingHorizontal={"$0"}>
-      <TabView
-        renderTabBar={renderTabBar}
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: WIDTH }}
-      />
-    </Screen>
+    <>
+      <Stack.Screen options={{ headerBackButtonMenuEnabled: true }} />
+      <Screen edges={["bottom"]} paddingHorizontal={"$0"}>
+        <TabView
+          renderTabBar={renderTabBar}
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: WIDTH }}
+        />
+      </Screen>
+    </>
   );
 }

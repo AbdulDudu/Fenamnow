@@ -19,10 +19,6 @@ import { useMutation } from "@tanstack/react-query";
 import { cn } from "@ui/lib/utils";
 import useSupabaseBrowser from "@web/lib/helpers/supabase/browser-client";
 import { useClientPublicUrls } from "@web/lib/hooks/use-client-public-url";
-import {
-  createNewConversation,
-  findExistingChat
-} from "@web/lib/queries/chats";
 import { useSession } from "@web/modules/common/shared/providers/session";
 import { MessageSquare, Play } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -40,26 +36,13 @@ export default function PropertyPoster({
   const supabase = useSupabaseBrowser();
   const { session } = useSession();
 
-  const { mutate: createConversation } = useMutation({
-    mutationFn: () =>
-      createNewConversation({
-        client: supabase,
-        user: session.user,
-        receiver_id: id
-      }),
-    onSuccess: data => {
-      router.prefetch(`/chats/${data?.data?.[0]?.id}`);
-      router.push(`/chats/${data?.data?.[0]?.id}`);
-    }
-  });
-
-  const { data: existingChat } = useQuery(
-    findExistingChat({
-      client: supabase,
-      user: session?.user,
-      receiver_id: id
-    })
-  );
+  // const { data: existingChat } = useQuery(
+  //   findExistingChat({
+  //     client: supabase,
+  //     user: session?.user,
+  //     receiver_id: id
+  //   })
+  // );
 
   const videoURL = useClientPublicUrls(video_tour?.uri || "", "properties");
 
@@ -106,9 +89,9 @@ export default function PropertyPoster({
                   </div>
                 </DialogContent>
               </Dialog>
-              {existingChat ? (
+              {/* {existingChat ? (
                 <Button
-                  onClick={() => router.push(`/chats/${existingChat?.id}`)}
+                  onClick={() => router.push(`/chat/${existingChat?.id}`)}
                   className={cn("w-full lg:w-auto", is_owner && "hidden")}
                 >
                   <MessageSquare className="mr-2" />
@@ -125,7 +108,7 @@ export default function PropertyPoster({
                   <MessageSquare className="mr-2" />
                   Send a message
                 </Button>
-              )}
+              )} */}
             </div>
           </div>
         </CardContent>

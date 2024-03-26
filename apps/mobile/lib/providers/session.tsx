@@ -5,15 +5,12 @@ import {
   Provider,
   Session
 } from "@supabase/supabase-js";
-import { useQuery } from "@tanstack/react-query";
 import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React, { createContext, useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
-import { createChatToken } from "../data/chat";
-import { chatClient } from "../helpers/chat";
 import { supabase } from "../helpers/supabase";
 
 type OAuthUrlType = {

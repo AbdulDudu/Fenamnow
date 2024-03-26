@@ -1,5 +1,5 @@
 import { Session } from "@supabase/supabase-js";
-import { chatClient } from "../helpers/chat";
+import { getStreamChatClient } from "../helpers/getstream";
 
 export const createChatToken = async (id: Session["user"]["id"]) => {
   return await fetch(`${process.env.EXPO_PUBLIC_WEB_APP_URL}/api/chat/token`, {
@@ -15,7 +15,7 @@ export const findChatChannel = async ({
   id: Session["user"]["id"];
   owner_id: string;
 }) => {
-  return await chatClient.queryUsers({
+  return await getStreamChatClient.queryUsers({
     id: { $in: [id, owner_id] }
   });
 };

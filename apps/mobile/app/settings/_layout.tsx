@@ -4,7 +4,6 @@ import React from "react";
 export default function SettingsLayout() {
   return (
     <Stack
-      initialRouteName="index"
       screenOptions={{
         headerTitleStyle: {
           fontFamily: "Inter_600SemiBold"

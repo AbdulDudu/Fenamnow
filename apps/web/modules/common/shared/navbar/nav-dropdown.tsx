@@ -3,6 +3,7 @@ import {
   AvatarFallback,
   AvatarImage
 } from "@fenamnow/ui/components/ui/avatar";
+import { Badge } from "@fenamnow/ui/components/ui/badge";
 import { Button } from "@fenamnow/ui/components/ui/button";
 import {
   DropdownMenu,
@@ -15,8 +16,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@fenamnow/ui/components/ui/dropdown-menu";
+import { useQuery } from "@tanstack/react-query";
+import { getStreamChatClient } from "@web/lib/helpers/chat";
+import { createChatToken } from "@web/lib/queries/chats";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { SlLogout } from "react-icons/sl";
 import { useSession } from "../providers/session";
 
@@ -29,7 +34,7 @@ type Props = {
   };
 };
 export function NavDropdown({ metadata }: Props) {
-  const { logOut } = useSession();
+  const { logOut, session } = useSession();
   const { theme, setTheme } = useTheme();
 
   return (
@@ -53,7 +58,7 @@ export function NavDropdown({ metadata }: Props) {
             <Link href="/properties">Properties</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/chats">Chat</Link>
+            <Link href="/chat">Chat</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/profile">Profile</Link>

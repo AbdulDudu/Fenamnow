@@ -12,7 +12,7 @@ import {
 } from "stream-chat-expo";
 
 export default function ChatRoomScreen() {
-  const { channel } = useChatContext();
+  const { channel, setChannel } = useChatContext();
   const title = useChannelPreviewDisplayName(channel);
 
   const primaryColor = useToken("colors", "primary500");
@@ -20,8 +20,15 @@ export default function ChatRoomScreen() {
   return (
     <>
       <Stack.Screen
+        listeners={{
+          beforeRemove: () => {
+            setChannel(null);
+          }
+        }}
         options={{
-          title: title || ""
+          title: title || "",
+          headerBackButtonMenuEnabled: true,
+          headerBackTitleVisible: false
         }}
       />
       <Screen px="$0" edges={[]}>

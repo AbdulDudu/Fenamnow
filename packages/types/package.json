@@ -15,6 +15,7 @@
   "exports": {
     "./database": "./src/database.ts",
     "./files": "./src/files.ts",
+    "./chat": "./src/chat.ts",
     "./global": "./src/global.ts"
   }
 }

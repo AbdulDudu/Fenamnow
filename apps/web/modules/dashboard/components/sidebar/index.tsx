@@ -84,9 +84,9 @@ export default function Sidebar({
                   icon: Home
                 },
                 {
-                  title: "Chats",
-                  href: "/chats",
-                  variant: pathname.startsWith("/chats") ? "default" : "ghost",
+                  title: "Chat",
+                  href: "/chat",
+                  variant: pathname.startsWith("/chat") ? "default" : "ghost",
                   icon: MessageSquare
                 }
               ]}
@@ -139,7 +139,7 @@ export default function Sidebar({
         <ResizablePanel
           className={cn(
             "max-h-full",
-            pathname.startsWith("/chats") && "container"
+            pathname.startsWith("/chat") && "container"
           )}
         >
           {children}

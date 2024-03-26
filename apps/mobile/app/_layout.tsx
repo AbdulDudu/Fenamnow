@@ -1,10 +1,9 @@
 import { config } from "@/config/gluestack-ui.config";
-import { createChatToken } from "@/lib/data/chat";
-import { chatClient } from "@/lib/helpers/chat";
-import { ChatProvider, useChatContext } from "@/lib/providers/chat";
+import { ChatProvider } from "@/lib/providers/chat";
 import QueryProvider from "@/lib/providers/query";
-import { SessionProvider, useSession } from "@/lib/providers/session";
-import { HEIGHT } from "@/lib/utils/constants";
+import { SessionProvider } from "@/lib/providers/session";
+import { ChatWrapper } from "@/modules/chat/components/chat-wrapper";
+import { ErrorBoundary } from "@/modules/common/error-boundary/error-boundary";
 import { Toasts } from "@backpackapp-io/react-native-toast";
 import {
   Inter_100Thin,
@@ -19,34 +18,21 @@ import {
   useFonts
 } from "@expo-google-fonts/inter";
 import { COLORMODES } from "@gluestack-style/react/lib/typescript/types";
-import {
-  GluestackUIProvider,
-  useColorMode,
-  useToken
-} from "@gluestack-ui/themed";
+import { GluestackUIProvider } from "@gluestack-ui/themed";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider
 } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { SplashScreen, Stack } from "expo-router";
+import React, { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Chat, OverlayProvider } from "stream-chat-expo";
-import type { DeepPartial, Theme } from "stream-chat-expo";
 
 SplashScreen.preventAutoHideAsync();
 
-export { ErrorBoundary } from "expo-router";
-
-export const unstable_settings = {
-  initialRouteName: "(drawers)"
-};
-
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
   const [loaded, error] = useFonts({
     Inter_100Thin,
     Inter_200ExtraLight,
@@ -59,7 +45,6 @@ export default function RootLayout() {
     Inter_900Black
   });
 
-  const colorScheme = useColorScheme();
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -81,13 +66,15 @@ export default function RootLayout() {
           config={config}
           colorMode={colorScheme as COLORMODES}
         >
-          <QueryProvider>
-            <SessionProvider>
+          <ErrorBoundary catchErrors="always">
+            <QueryProvider>
               <ChatProvider>
-                <RootLayoutNav />
+                <SessionProvider>
+                  <RootLayoutNav />
+                </SessionProvider>
               </ChatProvider>
-            </SessionProvider>
-          </QueryProvider>
+            </QueryProvider>
+          </ErrorBoundary>
           <Toasts />
         </GluestackUIProvider>
       </ThemeProvider>
@@ -96,150 +83,41 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorMode = useColorMode();
-  const { session } = useSession();
-  const { setChannel } = useChatContext();
-  const [initialChannelId, setInitialChannelId] = useState<string>();
-
-  const listLightBackgroundColor = useToken("colors", "secondary200");
-  const listMessengerLightBackgroundColor = useToken("colors", "secondary300");
-
-  const listDarkBackgroundColor = useToken("colors", "black");
-  const listMessengerDarkBackgroundColor = useToken("colors", "secondary800");
-
-  const chatTheme: DeepPartial<Theme> = {
-    channelListMessenger: {
-      flatList: {
-        backgroundColor:
-          colorMode == "light"
-            ? listMessengerLightBackgroundColor
-            : listMessengerDarkBackgroundColor
-      },
-      flatListContent: {
-        backgroundColor:
-          colorMode == "light"
-            ? listLightBackgroundColor
-            : listDarkBackgroundColor
-      }
-    },
-    channelPreview: {
-      container: {
-        backgroundColor:
-          colorMode == "light" ? "white" : listMessengerDarkBackgroundColor
-      },
-      title: {
-        color: colorMode == "light" ? "black" : "white"
-      }
-    },
-    channelListSkeleton: {
-      container: {
-        backgroundColor:
-          colorMode == "light"
-            ? listLightBackgroundColor
-            : listDarkBackgroundColor
-      },
-      // @ts-ignore
-      maskFillColor: colorMode == "light" ? "white" : "black",
-      background: {
-        backgroundColor:
-          colorMode == "light" ? "white" : listMessengerDarkBackgroundColor
-      }
-    },
-    messageList: {
-      container: {
-        backgroundColor:
-          colorMode == "light"
-            ? listLightBackgroundColor
-            : listDarkBackgroundColor
-      }
-    },
-    messageInput: {
-      container: {
-        backgroundColor:
-          colorMode == "light" ? "white" : listMessengerDarkBackgroundColor,
-        paddingBottom: HEIGHT * 0.03
-      },
-      inputBoxContainer: {
-        borderColor:
-          colorMode == "light"
-            ? listMessengerDarkBackgroundColor
-            : listMessengerLightBackgroundColor
-      },
-      inputBox: {
-        color: colorMode == "light" ? "black" : "white"
-      }
-    }
-  };
-
-  const { data } = useQuery({
-    queryKey: [session],
-    queryFn: () => createChatToken(session?.user.id!),
-    enabled: !!session
-  });
-
-  console.log(data?.token);
-
-  useEffect(() => {
-    const connectUser = async () => {
-      session &&
-        (await chatClient
-          .connectUser(
-            {
-              id: session?.user.id!,
-              name: session?.user.user_metadata.full_name
-            },
-            data?.token
-          )
-          .catch(error => console.error(error)));
-    };
-
-    connectUser();
-  }, [session]);
-
   return (
-    <OverlayProvider
-      value={{
-        style: chatTheme
-      }}
-    >
-      <Chat
-        // @ts-ignore
-        client={chatClient}
+    <ChatWrapper>
+      <Stack
+        screenOptions={{
+          headerBackTitleVisible: false,
+          headerTitleStyle: {
+            fontFamily: "Inter_600SemiBold"
+          }
+        }}
       >
-        <Stack
-          initialRouteName="splash"
-          screenOptions={{
-            headerBackTitleVisible: false,
-            headerTitleStyle: {
-              fontFamily: "Inter_600SemiBold"
-            }
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+        <Stack.Screen name="search" options={{ headerTitle: "Search" }} />
+        <Stack.Screen
+          name="settings"
+          options={{
+            headerShown: false
           }}
-        >
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-          <Stack.Screen name="search" options={{ headerTitle: "Search" }} />
-          <Stack.Screen
-            name="chat/[cid]/index"
-            options={{
-              headerBackButtonMenuEnabled: true,
-              headerBackTitleVisible: false
-            }}
-          />
-          <Stack.Screen
-            name="settings"
-            options={{
-              headerShown: false
-            }}
-          />
-          <Stack.Screen
-            name="property/[id]"
-            options={{
-              headerTitle: "Property Details"
-            }}
-          />
-        </Stack>
-      </Chat>
-    </OverlayProvider>
+        />
+        <Stack.Screen
+          name="chat/[cid]/index"
+          options={{
+            headerBackButtonMenuEnabled: true,
+            headerBackTitleVisible: false
+          }}
+        />
+        <Stack.Screen
+          name="property/[id]/index"
+          options={{
+            headerShown: true,
+            title: "Property Details"
+          }}
+        />
+      </Stack>
+    </ChatWrapper>
   );
 }
