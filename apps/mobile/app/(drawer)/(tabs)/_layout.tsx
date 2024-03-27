@@ -1,7 +1,5 @@
-import { createChatToken } from "@/lib/data/chat";
-import { getStreamChatClient } from "@/lib/helpers/getstream";
 import { getPublicUrl } from "@/lib/helpers/supabase";
-import { useChatClient } from "@/lib/hooks/use-chat-client";
+import { useChatProviderContext } from "@/lib/providers/chat";
 import { useSession } from "@/lib/providers/session";
 import { HEIGHT } from "@/lib/utils/constants";
 import { Feather, FontAwesome5, Octicons } from "@expo/vector-icons";
@@ -17,7 +15,6 @@ import {
 import { DrawerToggleButton } from "@react-navigation/drawer";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, useRouter } from "expo-router";
-import { useState } from "react";
 import { Platform, useColorScheme } from "react-native";
 import { useChatContext } from "stream-chat-expo";
 
@@ -32,9 +29,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const router = useRouter();
   const { session } = useSession();
-
-  const { client } = useChatContext();
-
+  const { unreadMessages } = useChatProviderContext();
   return (
     <Tabs
       screenOptions={{
@@ -94,19 +89,21 @@ export default function TabLayout() {
           title: "Chat",
           tabBarIcon: ({ color }) => (
             <VStack>
-              <Badge
-                h={22}
-                w={22}
-                bg="$red600"
-                borderRadius="$full"
-                mb={-14}
-                mr={-14}
-                zIndex={1}
-                variant="solid"
-                alignSelf="flex-end"
-              >
-                {/* <BadgeText color="$white">{unreadCount}</BadgeText> */}
-              </Badge>
+              {unreadMessages! > 0 ? (
+                <Badge
+                  h={22}
+                  w={22}
+                  bg="$red600"
+                  borderRadius="$full"
+                  mb={-14}
+                  mr={-14}
+                  zIndex={1}
+                  variant="solid"
+                  alignSelf="flex-end"
+                >
+                  <BadgeText color="$white">{unreadMessages}</BadgeText>
+                </Badge>
+              ) : null}
               <Feather
                 color={color}
                 name="message-square"

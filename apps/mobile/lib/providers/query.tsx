@@ -1,13 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import NetInfo from "@react-native-community/netinfo";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
-import {
-  focusManager,
-  onlineManager,
-  QueryClient
-} from "@tanstack/react-query";
+import { focusManager, QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { AppStateStatus, Platform } from "react-native";
+import { DevToolsBubble } from "react-native-react-query-devtools";
 import { useAppState } from "../hooks/use-app-state";
 import { useOnlineManager } from "../hooks/use-online-manager";
 
@@ -17,18 +13,11 @@ function onAppStateChange(status: AppStateStatus) {
   }
 }
 
-onlineManager.setEventListener(setOnline => {
-  return NetInfo.addEventListener(state => {
-    setOnline(!!state.isConnected);
-  });
-});
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 4,
-      networkMode: "offlineFirst",
-      gcTime: 1000 * 60 * 60 * 24
+      retry: 2,
+      gcTime: 1000 * 60 * 60 * 24 // 24 hours
     }
   }
 });
@@ -36,7 +25,6 @@ const queryClient = new QueryClient({
 const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage
 });
-
 export default function QueryProvider({
   children
 }: {
@@ -52,6 +40,7 @@ export default function QueryProvider({
       persistOptions={{ persister: asyncStoragePersister }}
     >
       {children}
+      {/* <DevToolsBubble /> */}
     </PersistQueryClientProvider>
   );
 }

@@ -1,4 +1,5 @@
 import { toast, ToastPosition } from "@backpackapp-io/react-native-toast";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   AuthError,
   AuthTokenResponse,
@@ -191,6 +192,9 @@ export const SessionProvider = ({
       .update({ fcm_token: "" })
       .eq("id", {
         id: session?.user.id
+      })
+      .then(async () => {
+        await AsyncStorage.removeItem("chat_token");
       })
       .then(async () => await supabase.auth.signOut());
   };

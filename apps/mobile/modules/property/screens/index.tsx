@@ -6,17 +6,14 @@ import {
   getPropertyById,
   removeFromFavorites
 } from "@/lib/data/property";
-import { getStreamChatClient } from "@/lib/helpers/getstream";
 import { getPublicUrl } from "@/lib/helpers/supabase";
-import { useChatClient } from "@/lib/hooks/use-chat-client";
-import { useChatContext } from "@/lib/providers/chat";
+import { useChatProviderContext } from "@/lib/providers/chat";
 import { useSession } from "@/lib/providers/session";
 import { HEIGHT, WIDTH } from "@/lib/utils/constants";
 import { nFormatter } from "@/lib/utils/nFormatter";
 import { BookmarkIcon } from "@/modules/common/icons/bookmark/bookmark";
 import { PhotosIcon } from "@/modules/common/icons/photos";
 import { SendIcon } from "@/modules/common/icons/send/send";
-import { VideoIcon } from "@/modules/common/icons/video";
 import { Screen } from "@/modules/common/ui/screen";
 import { toast, ToastPosition } from "@backpackapp-io/react-native-toast";
 import ReadMore from "@fawazahmed/react-native-read-more";
@@ -54,6 +51,7 @@ import { Alert, Modal, Platform, Share } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { createOpenLink } from "react-native-open-maps";
 import PagerView from "react-native-pager-view";
+import { useChatContext } from "stream-chat-expo";
 import VideoModal from "../components/video-modal";
 
 export default function PropertyDetailsScreen() {
@@ -64,7 +62,8 @@ export default function PropertyDetailsScreen() {
   const [videoModal, setVideoModal] = useState(false);
   const [photosModal, setPhotosModal] = useState(false);
   const colorMode = useColorMode();
-  const { setChannel } = useChatContext();
+  const { setChannel } = useChatProviderContext();
+  const { client } = useChatContext();
 
   const { data: propertyData, isPending } = useQuery({
     queryKey: ["property", id],
@@ -148,11 +147,14 @@ export default function PropertyDetailsScreen() {
   });
 
   const { data: chatData } = useQuery({
-    queryKey: [id, propertyOwner?.data?.id!],
+    queryKey: [id],
+    staleTime: 300,
     queryFn: () =>
-      findChatChannel({
-        id: propertyOwner?.data?.id!,
-        owner_id: session?.user.id!
+      client.queryChannels({
+        type: "messaging",
+        members: {
+          $in: [session?.user.id!, propertyOwner?.data?.id as string]
+        }
       }),
     enabled: !!session
   });
@@ -553,9 +555,9 @@ export default function PropertyDetailsScreen() {
                     <Button
                       width="50%"
                       onPress={
-                        chatData
+                        chatData && chatData?.length > 0
                           ? async () => {
-                              await getStreamChatClient
+                              await client
                                 .queryChannels(
                                   {
                                     type: "messaging",
@@ -575,15 +577,12 @@ export default function PropertyDetailsScreen() {
                                 .catch(err => console.error(err));
                             }
                           : async () => {
-                              const channel = getStreamChatClient.channel(
-                                "messaging",
-                                {
-                                  members: [
-                                    propertyOwner?.data?.id as string,
-                                    session?.user.id!
-                                  ]
-                                }
-                              );
+                              const channel = client.channel("messaging", {
+                                members: [
+                                  propertyOwner?.data?.id as string,
+                                  session?.user.id!
+                                ]
+                              });
                               await channel.watch();
                               setChannel(channel);
                               router.navigate(`/chat/${channel?.cid}`);
@@ -597,7 +596,9 @@ export default function PropertyDetailsScreen() {
                         as={SendIcon}
                       />
                       <ButtonText fontSize="$sm">
-                        {chatData ? "Continue Chat" : "Send a message"}
+                        {chatData && chatData?.length > 0
+                          ? "Continue Chat"
+                          : "Send a message"}
                       </ButtonText>
                     </Button>
                   )}
