@@ -5,7 +5,7 @@ export default (): ExpoConfig => ({
   name: "Fenamnow mobile",
   icon: "./assets/icon.png",
   slug: "fenamnow",
-  version: "1.1.6",
+  version: "1.1.7",
   scheme: "com.fenamnow",
   orientation: "portrait",
   userInterfaceStyle: "automatic",
