@@ -40,8 +40,13 @@
     "snaplet": "^0.89.4",
     "turbo": "latest"
   },
-  "workspaces": ["apps/*", "packages/*", "supabase/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "supabase/*"
+  ],
   "engines": {
     "node": ">=18"
-  }
+  },
+  "packageManager": "bun@1.0.15"
 }

@@ -5,7 +5,7 @@ export default (): ExpoConfig => ({
   name: "Fenamnow mobile",
   icon: "./assets/icon.png",
   slug: "fenamnow",
-  version: "1.1.6",
+  version: "1.1.8",
   scheme: "com.fenamnow",
   orientation: "portrait",
   userInterfaceStyle: "automatic",
@@ -28,9 +28,8 @@ export default (): ExpoConfig => ({
     usesAppleSignIn: true,
     bundleIdentifier: "com.fenamnow.ios",
     associatedDomains: ["applinks:fenamnow.com"],
-    googleServicesFile: IS_DEV
-      ? "./GoogleService-Info.plist"
-      : process.env.GOOGLE_SERVICES_PLIST!,
+    googleServicesFile:
+      "./GoogleService-Info.plist" || process.env.GOOGLE_SERVICES_PLIST!,
     config: {
       usesNonExemptEncryption: false,
       googleMapsApiKey: process.env.GOOGLE_MAPS_IOS_API_KEY!
@@ -45,9 +44,8 @@ export default (): ExpoConfig => ({
       backgroundColor: "#0e96f8",
       foregroundImage: "./assets/adaptive-icon.png"
     },
-    googleServicesFile: IS_DEV
-      ? "./google-services.json"
-      : process.env.GOOGLE_SERVICES_JSON!,
+    googleServicesFile:
+      "./google-services.json" || process.env.GOOGLE_SERVICES_JSON!,
     config: {
       googleMaps: {
         apiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY!
