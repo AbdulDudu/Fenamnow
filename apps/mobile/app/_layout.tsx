@@ -6,7 +6,6 @@ import { useChatTheme } from "@/lib/hooks/use-chat-theme";
 import { ChatProvider } from "@/lib/providers/chat";
 import QueryProvider from "@/lib/providers/query";
 import { SessionProvider } from "@/lib/providers/session";
-import { ErrorBoundary } from "@/modules/common/error-boundary/error-boundary";
 import { Toasts } from "@backpackapp-io/react-native-toast";
 import {
   NotoSans_100Thin,
@@ -27,12 +26,13 @@ import {
   DefaultTheme,
   ThemeProvider
 } from "@react-navigation/native";
-import * as Linking from "expo-linking";
 import { router, SplashScreen, Stack } from "expo-router";
 import React, { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Chat, OverlayProvider } from "stream-chat-expo";
+
+export { ErrorBoundary } from "@/modules/common/error-boundary/error-boundary";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -122,13 +122,11 @@ export default function RootLayout() {
           config={config}
           colorMode={colorScheme as COLORMODES}
         >
-          <ErrorBoundary catchErrors="always">
-            <QueryProvider>
-              <SessionProvider>
-                <RootLayoutNav />
-              </SessionProvider>
-            </QueryProvider>
-          </ErrorBoundary>
+          <QueryProvider>
+            <SessionProvider>
+              <RootLayoutNav />
+            </SessionProvider>
+          </QueryProvider>
           <Toasts />
         </GluestackUIProvider>
       </ThemeProvider>

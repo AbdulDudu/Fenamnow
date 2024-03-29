@@ -1,11 +1,8 @@
-import { StreamChatGenerics } from "@fenamnow/types/chat";
 import notifee from "@notifee/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
 import { useQuery } from "@tanstack/react-query";
-import * as Device from "expo-device";
 import { useEffect, useRef, useState } from "react";
-import { StreamChat } from "stream-chat";
 import { createChatToken } from "../data/chat";
 import { getStreamChatClient } from "../helpers/getstream";
 import { supabase } from "../helpers/supabase";
@@ -102,7 +99,10 @@ export const useChatClient = () => {
           },
           chatToken
         )
-        .catch(e => {
+        .catch(async e => {
+          if (e.code == 401) {
+            await AsyncStorage.removeItem("chat_token");
+          }
           console.error(e);
         });
 

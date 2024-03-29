@@ -1,4 +1,4 @@
-// import { reportCrash } from "@/lib/utils/crash-reporting";
+import { reportCrash } from "@/lib/utils/crash-reporting";
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { ErrorDetails } from "./error-details";
 
@@ -37,7 +37,7 @@ export class ErrorBoundary extends Component<Props, State> {
     });
 
     if (!__DEV__) {
-      // reportCrash(error);
+      reportCrash(error);
     }
   }
 
