@@ -1,0 +1,14 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.fenamnow.android",
+      "sha256_cert_fingerprints": [
+        "DD:A9:00:0E:FC:6E:39:60:9B:E5:6E:25:5F:A9:FE:11:6E:A3:1B:AA:7C:B4:04:99:D3:32:DE:84:FA:D1:C6:46",
+        "38:9C:8C:D5:F7:60:08:56:8D:D9:8D:C6:2D:1B:44:6D:2D:69:A5:F1:A6:63:E5:09:3B:B2:9D:07:24:1D:2C:DD",
+        "38:9C:8C:D5:F7:60:08:56:8D:D9:8D:C6:2D:1B:44:6D:2D:69:A5:F1:A6:63:E5:09:3B:B2:9D:07:24:1D:2C:DD"
+      ]
+    }
+  }
+]

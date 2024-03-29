@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: "*.{js,ts,jsx,tsx}"
+      run: bun run format
+
+pre-push:
+  commands:
+    testing-build:
+      run: bun run build

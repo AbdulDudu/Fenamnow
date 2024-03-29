@@ -1,0 +1,47 @@
+{
+  "name": "fenamnow",
+  "version": "1.1.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "turbo build",
+    "clean": "rm -rf node_modules",
+    "dev": "turbo run dev",
+    "generate": "turbo run generate",
+    "dev:mobile": "cd apps/mobile && bun start",
+    "build:android": "cd apps/mobile && bun build:android",
+    "build:ios": "cd apps/mobile && bun build:ios",
+    "android": "cd apps/mobile && expo run:android",
+    "ios": "cd apps/mobile && expo run:ios",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "expo:install": "cd apps/mobile && bun expo install",
+    "expo:uninstall": "cd apps/mobile && bun expo uninstall",
+    "expo:doctor": "cd apps/mobile && bunx expo-doctor",
+    "eas:simulator": "cd apps/mobile && eas build --profile simulator",
+    "eas:preview": "cd apps/mobile && eas build --profile preview",
+    "eas:production": "cd apps/mobile && eas build --profile production",
+    "eas:submit": "cd apps/mobile && eas submit",
+    "ui:add": "cd packages/ui && bun ui:add",
+    "generate:seed": "cd supabase && npx tsx seed.mts > seed.sql",
+    "seed": "cd supabase && DRY=0 npx tsx seed.mts"
+  },
+  "devDependencies": {
+    "@fenamnow/eslint-config": "*",
+    "@fenamnow/typescript-config": "*",
+    "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
+    "@snaplet/copycat": "^5.0.0",
+    "@snaplet/seed": "^0.89.4",
+    "@types/node": "^20.11.20",
+    "lefthook": "^1.6.7",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.5.12",
+    "snaplet": "^0.89.4",
+    "turbo": "latest"
+  },
+  "workspaces": ["apps/*", "packages/*", "supabase/*"],
+  "engines": {
+    "node": ">=18"
+  }
+}

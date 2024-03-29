@@ -1,0 +1,22 @@
+{
+  "extends": ["expo/tsconfig.base", "@fenamnow/typescript-config/base.json"],
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "exactOptionalPropertyTypes": true,
+    "experimentalDecorators": true,
+    "strict": true,
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "plugins/withAndroidMainActivityAttributes.js",
+    "plugins/react-native-maps-plugin.js",
+    "plugins/withAndroidQueries.js"
+  ],
+  "exclude": ["node_modules"]
+}

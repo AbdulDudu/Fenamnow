@@ -1,0 +1,43 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "format":{
+      "dependsOn": ["^format"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "develop": {
+      "cache": false
+    },
+    "generate": {
+      "dependsOn": ["^generate"],
+      "outputs": []
+    },
+    "@fenamnow/types#generate": {
+      "dependsOn": ["@fenamnow/supabase#start", "^generate"],
+      "outputs": []
+    },
+    "@fenamnow/supabase#start": {
+      "outputs": [],
+      "cache": false
+    },
+    "@fenamnow/supabase#test": {
+      "dependsOn": ["@fenamnow/supabase#start", "^build"],
+      "outputs": []
+    },
+    "@fenamnow/supabase#lint": {
+      "dependsOn": ["@fenamnow/supabase#start", "format:check"],
+      "outputs": []
+    }
+  }
+}

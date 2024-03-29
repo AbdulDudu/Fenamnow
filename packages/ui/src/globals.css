@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "~stream-chat-react/dist/css/v2/index.css";
+
+@layer base {
+  :root {
+    --background: 211 32% 99%;
+    --foreground: 211 56% 3%;
+    --muted: 211 6% 85%;
+    --muted-foreground: 211 2% 30%;
+    --popover: 211 32% 98%;
+    --popover-foreground: 211 56% 2%;
+    --card: 211 32% 98%;
+    --card-foreground: 211 56% 2%;
+    --border: 211 9% 89%;
+    --input: 211 9% 89%;
+    --primary: 211 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 211 4% 92%;
+    --secondary-foreground: 211 4% 32%;
+    --accent: 211 4% 92%;
+    --accent-foreground: 211 4% 32%;
+    --destructive: 12 94% 28%;
+    --destructive-foreground: 12 94% 88%;
+    --ring: 211 100% 50%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 211 60% 0%;
+    --foreground: 211 26% 100%;
+    --muted: 219.46 9.94% 23.09%;
+    --muted-foreground: 0 2% 70%;
+    --popover: 0 0% 1%;
+    --popover-foreground: 0 0% 100%;
+    --card: 0 0% 1%;
+    --card-foreground: 0 0% 100%;
+    --border: 211 9% 15%;
+    --input: 211 9% 15%;
+    --primary: 211 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 76%;
+    --accent: 0 0% 16%;
+    --accent-foreground: 0 0% 76%;
+    --destructive: 12 94% 57%;
+    --destructive-foreground: 0 0% 0%;
+    --ring: 211 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  h1 {
+    @apply text-4xl font-extrabold lg:text-5xl;
+  }
+
+  h2 {
+    @apply text-3xl font-extrabold lg:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl font-extrabold lg:text-3xl;
+  }
+
+  h4 {
+    @apply text-xl font-extrabold lg:text-2xl;
+  }
+
+  .veriff-description {
+    @apply text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+}
