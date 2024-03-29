@@ -58,8 +58,7 @@ export default function AuthScreen() {
   const router = useRouter();
   const [type, setType] = useState<"login" | "register">("login");
   const [showPassword, setShowPassword] = useState(false);
-  const { login, register, session, signInWithGoogle, createSessionFromUrl } =
-    useSession();
+  const { login, register, session, createSessionFromUrl } = useSession();
   const [loading, setLoading] = useState(false);
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
@@ -145,9 +144,8 @@ export default function AuthScreen() {
       if (!data.data) {
         clearErrors();
         return;
-      } else if (data.data) {
-        setError("email", { message: "Profile already exist" });
       }
+      setError("email", { message: "Profile already exist" });
     },
     onError(error) {
       console.log(error);
@@ -159,8 +157,9 @@ export default function AuthScreen() {
 
   useEffect(() => {
     type == "register" &&
+      debouncedSearchTerm[0].length > 0 &&
       findProfileMutation({ email: watch("email") as unknown as string });
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm[0]]);
 
   useEffect(() => {
     WebBrowser.warmUpAsync();

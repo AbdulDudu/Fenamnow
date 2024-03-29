@@ -8,7 +8,6 @@ import {
   goToGoogleMaps,
   prepareStaticMapUrl
 } from "@/lib/utils/go-to-googlemaps";
-import IconButton from "@/modules/common/ui/icon-button";
 import Star from "@/modules/common/ui/icons/Star";
 import {
   Button,
@@ -24,7 +23,7 @@ import { isEmpty } from "lodash";
 import { Mic, Pause, Play } from "lucide-react-native";
 import moment from "moment";
 import React, { useMemo, useState } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import {
   Avatar,
   CardProps,
@@ -72,7 +71,7 @@ const MessageAttachment = ({
       } else if (status === AudioStatus.RESUMED) {
         setPaused(false);
       } else if (status === AudioStatus.STOPPED) {
-        await onStopPlay();
+        onStopPlay();
       }
     });
   };

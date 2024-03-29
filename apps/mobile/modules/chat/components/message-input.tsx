@@ -1,11 +1,11 @@
 import { getStreamChatClient } from "@/lib/helpers/getstream";
 import { useChatProviderContext } from "@/lib/providers/chat";
-import { OverlayProvider } from "@gluestack-ui/overlay";
 import { Button, ButtonIcon, HStack, View } from "@gluestack-ui/themed";
 import { set } from "lodash";
-import { Mic, PlusCircle, Send } from "lucide-react-native";
+import { Mic, Send } from "lucide-react-native";
 import moment from "moment";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { Platform } from "react-native";
 import AudioRecorderPlayer from "react-native-audio-recorder-player";
 import {
   AutoCompleteInput,
@@ -20,8 +20,7 @@ import AudioRecorder from "./audio-recorder";
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
 export const CustomMessageInput = (props: any) => {
-  const { sendMessage, text, toggleAttachmentPicker } =
-    useMessageInputContext();
+  const { sendMessage, text } = useMessageInputContext();
   const [recordingActive, setRecordingActive] = useState(false);
   const [recordingDurationInMS, setRecordingDurationInMS] = useState(0);
 
@@ -96,18 +95,13 @@ export const CustomMessageInput = (props: any) => {
       <ImageUploadPreview />
       <FileUploadPreview />
       <HStack
-        height="$16"
+        height={Platform.OS === "ios" ? "$20" : "$16"}
         justifyContent="space-between"
         space="lg"
         alignItems="center"
       >
         {recordingActive ? (
-          <AudioRecorder
-            recordingActive={recordingActive}
-            setRecordingActive={setRecordingActive}
-            recordingDurationInMS={recordingDurationInMS}
-            setRecordingDurationInMS={setRecordingDurationInMS}
-          />
+          <AudioRecorder recordingDurationInMS={recordingDurationInMS} />
         ) : (
           <>
             {/* Attachments button */}

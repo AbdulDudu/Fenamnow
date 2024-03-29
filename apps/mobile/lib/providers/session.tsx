@@ -15,7 +15,6 @@ import { Alert } from "react-native";
 import { QuickSqliteClient } from "stream-chat-expo";
 import { getStreamChatClient } from "../helpers/getstream";
 import { supabase } from "../helpers/supabase";
-import { useChatProviderContext } from "./chat";
 
 type OAuthUrlType = {
   access_token?: string | null;
