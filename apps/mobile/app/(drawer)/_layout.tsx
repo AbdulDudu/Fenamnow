@@ -9,6 +9,7 @@ import {
   DrawerItemList,
   DrawerToggleButton
 } from "@react-navigation/drawer";
+import * as Application from "expo-application";
 import { router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import * as WebBrowser from "expo-web-browser";
@@ -142,10 +143,15 @@ export default function DrawerLayout() {
                 )}
                 onPress={goToContact}
               />
-              <HStack alignItems="center" space="md" p="$4">
-                <Icon as={CopyrightIcon} />
-                <Text semibold>Fenamnow {new Date().getFullYear()}</Text>
-              </HStack>
+              <VStack space="md" p="$4">
+                <Text fontSize="$sm" semibold>
+                  Version {Application.nativeApplicationVersion}
+                </Text>
+                <HStack alignItems="center" space="md">
+                  <Icon as={CopyrightIcon} />
+                  <Text semibold>Fenamnow {new Date().getFullYear()}</Text>
+                </HStack>
+              </VStack>
             </VStack>
           </DrawerContentScrollView>
         );

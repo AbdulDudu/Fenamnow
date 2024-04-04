@@ -21,19 +21,10 @@ import { getStreamChatClient } from "@web/lib/helpers/chat";
 import { createChatToken } from "@web/lib/queries/chats";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { SlLogout } from "react-icons/sl";
 import { useSession } from "../providers/session";
 
-type Props = {
-  metadata: {
-    email?: string;
-    full_name?: string;
-    avatar_url?: string;
-    [key: string]: any;
-  };
-};
-export function NavDropdown({ metadata }: Props) {
+export function NavDropdown() {
   const { logOut, session } = useSession();
   const { theme, setTheme } = useTheme();
 
@@ -42,12 +33,19 @@ export function NavDropdown({ metadata }: Props) {
       <DropdownMenuTrigger asChild>
         <Button variant="outline">
           <Avatar className="size-6">
-            <AvatarImage src={metadata.avatar_url} alt={metadata.full_name} />
+            <AvatarImage
+              src={session?.user.user_metadata.avatar_url}
+              alt={session?.user.user_metadata.full_name}
+            />
             <AvatarFallback>
-              {metadata.full_name?.split(" ").map(n => n[0])}
+              {session?.user.user_metadata.full_name
+                ?.split(" ")
+                .map((n: string) => n[0])}
             </AvatarFallback>
           </Avatar>
-          <span className="ml-2">{metadata.full_name?.split(" ")[0]}</span>
+          <span className="ml-2">
+            {session?.user.user_metadata.full_name?.split(" ")[0]}
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
@@ -59,9 +57,6 @@ export function NavDropdown({ metadata }: Props) {
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/chat">Chat</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/profile">Profile</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/settings">Settings</Link>

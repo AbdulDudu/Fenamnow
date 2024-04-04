@@ -121,7 +121,7 @@ const MessageAttachment = ({
   }
 
   return (
-    <HStack p="$3" direction={isMyMessage ? "ltr" : "rtl"}>
+    <HStack p="$3">
       <View>
         <Avatar image={user?.image || ""} name={""} size={48} />
         <Icon
@@ -137,27 +137,19 @@ const MessageAttachment = ({
         />
       </View>
 
-      <HStack p="$1" width="$64">
+      <HStack p="$1" space="md" width="$64">
         {isPlaying ? (
           <Button variant="link" onPress={onPausePlay} isDisabled={!isPlaying}>
             <ButtonIcon
               as={Pause}
-              sx={{
-                _dark: {
-                  color: isMyMessage ? "$white" : "$primary400"
-                }
-              }}
+              color={isMyMessage ? "$white" : "$primary400"}
             />
           </Button>
         ) : (
           <Button variant="link" onPress={onStartPlay} isDisabled={isPlaying}>
             <ButtonIcon
               as={Play}
-              sx={{
-                _dark: {
-                  color: isMyMessage ? "$white" : "$primary400"
-                }
-              }}
+              color={isMyMessage ? "$white" : "$primary400"}
             />
           </Button>
         )}

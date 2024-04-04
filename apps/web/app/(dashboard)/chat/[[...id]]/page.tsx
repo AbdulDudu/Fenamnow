@@ -1,4 +1,4 @@
-import ChatsScreen from "@web/modules/dashboard/screens/chats";
+import ChatsScreen from "@web/modules/dashboard/chat/screens";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

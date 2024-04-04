@@ -7,7 +7,7 @@ import {
   getProperties,
   getPropertyTypes
 } from "@web/lib/queries/properties";
-import PropertiesListScreen from "@web/modules/dashboard/screens/properties/list";
+import PropertiesListScreen from "@web/modules/dashboard/properties/screens/list";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 

@@ -11,8 +11,7 @@ import {
   DrawerTrigger
 } from "@fenamnow/ui/components/ui/drawer";
 import { Libraries, useLoadScript } from "@react-google-maps/api";
-import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import useSupabaseBrowser from "@web/lib/helpers/supabase/browser-client";
 import { getProperties } from "@web/lib/queries/properties";
 import { MAP_LIBRARIES } from "@web/lib/utils/constants";
@@ -20,8 +19,9 @@ import { findMapCenter } from "@web/lib/utils/find-map-center";
 import SearchPagination from "@web/modules/common/shared/pagination";
 import { useSession } from "@web/modules/common/shared/providers/session";
 import { Map } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import SearchFilters from "../components/filters";
+import { SearchFilters } from "../components/filters";
 import SearchResultsList from "../components/results-list";
 import ResultsMap from "../components/results-map";
 
@@ -31,15 +31,24 @@ export type SearchScreenProps = {
     city: string;
     community: string;
     property_type: string;
+    page: number;
   };
 };
-export default function SearchScreen({
-  params,
-  searchParams
-}: SearchScreenProps) {
+export default function SearchScreen() {
   const supabase = useSupabaseBrowser();
   const { session } = useSession();
 
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const city = searchParams.get("city") || undefined;
+  const community = searchParams.get("community") || undefined;
+  const property_type = searchParams.get("property_type");
+  const page = searchParams.get("page")
+    ? parseInt(searchParams.get("page")!)
+    : 0;
+  const params = {
+    listing_type: pathname.split("/")[3] as "sale" | "rental" | "lease"
+  };
   const [locationAccess, setLocationAccess] = useState<PermissionState>();
   const [location, setLocation] = useState<google.maps.LatLngLiteral>();
 
@@ -49,13 +58,11 @@ export default function SearchScreen({
   });
 
   const [filters, setFilters] = useState({
-    city: searchParams.city,
-    community: searchParams.community,
+    city,
+    community,
     listing_type: params.listing_type,
     property_types:
-      searchParams.property_type && searchParams.property_type !== "all"
-        ? [searchParams.property_type]
-        : []
+      property_type && property_type !== "all" ? [property_type] : []
   });
 
   const [newFilters, setNewFilters] = useState({
@@ -69,21 +76,28 @@ export default function SearchScreen({
     negotiable: true
   });
 
-  const { data: properties, count } = useQuery(
-    getProperties({
-      client: supabase,
-      session,
-      isAdmin: false,
-      ...filters
-    })
-  );
+  const { data: properties } = useQuery({
+    queryKey: [filters, page],
+    queryFn: async () =>
+      await getProperties({
+        client: supabase,
+        session,
+        start: (page - 1) * 5,
+        end: page * 5,
+        ...filters
+      }),
+    staleTime: 500
+  });
+
+  console.log(city, properties?.data);
 
   const mapCenter = useMemo<google.maps.LatLngLiteral>(
     () =>
       (properties &&
-        properties?.length > 0 &&
+        properties.data &&
+        properties.data.length > 0 &&
         findMapCenter(
-          properties?.map(property => {
+          properties.data?.map(property => {
             return {
               latitude: property.latitude as number,
               longitude: property.longitude as number
@@ -93,8 +107,15 @@ export default function SearchScreen({
         lat: location?.lat || 0,
         lng: location?.lng || 0
       },
-    [location, properties]
+    [location, properties?.data, filters]
   );
+
+  const applyFilters = () => {
+    setFilters({
+      ...filters,
+      ...newFilters
+    });
+  };
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -118,15 +139,12 @@ export default function SearchScreen({
     }
   }, []);
 
-  console.log("Params: ", params.listing_type);
-  console.log("Search params: ", searchParams);
-
   return (
     <div className="container w-full space-y-8">
-      <div className="flex min-h-screen w-full md:h-[90vh]">
+      <div className="flex h-screen w-full md:h-[90vh]">
         <ResultsMap
           isLoaded={isLoaded}
-          properties={properties}
+          properties={properties?.data}
           mapCenter={mapCenter}
           className="hidden md:flex"
         />
@@ -148,7 +166,7 @@ export default function SearchScreen({
                 <div className="h-[75vh] w-full">
                   <ResultsMap
                     isLoaded={isLoaded}
-                    properties={properties}
+                    properties={properties?.data}
                     mapCenter={mapCenter}
                     className="w-full md:hidden"
                   />
@@ -164,16 +182,20 @@ export default function SearchScreen({
             </Drawer>
           </div>
           <p>
-            {count} {params.listing_type} properties found
+            {properties?.count} {params.listing_type} properties found
           </p>
-          <SearchFilters />
+          <SearchFilters
+            newFilters={newFilters}
+            setNewFilters={setNewFilters}
+            applyFilters={applyFilters}
+          />
           <SearchResultsList
-            count={count}
+            count={properties?.count}
             listing_type={params.listing_type}
-            properties={properties}
+            properties={properties?.data}
           />
 
-          {count && <SearchPagination count={count} />}
+          {properties?.count && <SearchPagination count={properties.count} />}
         </div>
       </div>
     </div>

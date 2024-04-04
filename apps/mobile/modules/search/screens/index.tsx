@@ -27,11 +27,13 @@ export default function SearchScreen() {
     }>();
 
   const [filters, setFilters] = useState({
-    city,
-    community,
+    city: city !== "All" ? city?.toLowerCase() : "",
+    community: community !== "All" ? community?.toLowerCase() : "",
     listing_type,
     property_types:
-      property_type && property_type !== "all" ? [property_type] : []
+      property_type && property_type !== "All"
+        ? [property_type?.toLowerCase()]
+        : []
   });
 
   const [newFilters, setNewFilters] = useState({

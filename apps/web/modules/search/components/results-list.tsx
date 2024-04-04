@@ -10,6 +10,10 @@ export default function SearchResultsList({
   listing_type: string;
   properties: any;
 }) {
+  if (properties?.length == 0) {
+    return <div className="w-full flex-1" />;
+  }
+
   return (
     <div className="w-full flex-1">
       <ScrollArea className="size-full">

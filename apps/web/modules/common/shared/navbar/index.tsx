@@ -74,7 +74,7 @@ export default function Navbar({ isDashboard }: { isDashboard?: boolean }) {
         >
           {session !== undefined && session === null ? (
             <div className="hidden space-x-2 md:flex">
-              <Button asChild variant="outline">
+              <Button asChild variant="secondary">
                 <Link
                   href={
                     pathname.split("/")[1] === "property"
@@ -103,7 +103,7 @@ export default function Navbar({ isDashboard }: { isDashboard?: boolean }) {
                   </Link>
                 </Button>
               )}
-              <NavDropdown metadata={session.user.user_metadata} />
+              <NavDropdown />
             </div>
           )}
         </div>

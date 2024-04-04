@@ -33,7 +33,9 @@
     "production": {
       "bun": "1.0.15",
       "env": {
-        "APP_VARIANT": "production"
+        "APP_VARIANT": "production",
+        "GOOGLE_SERVICES_JSON": "string",
+        "GOOGLE_SERVICES_PLIST": "string"
       },
       "distribution": "store",
       "autoIncrement": true,

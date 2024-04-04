@@ -11,11 +11,6 @@ import {
 } from "@fenamnow/ui/components/ui/card";
 import { Checkbox } from "@fenamnow/ui/components/ui/checkbox";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from "@fenamnow/ui/components/ui/collapsible";
-import {
   FormControl,
   FormDescription,
   FormField,

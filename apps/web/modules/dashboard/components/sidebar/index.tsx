@@ -39,7 +39,7 @@ export default function Sidebar({
         onLayout={(sizes: number[]) => {
           document.cookie = `react-resizable-panels:layout=${JSON.stringify(sizes)}`;
         }}
-        className="min-h-screen pt-14"
+        className="pt-14"
         direction="horizontal"
       >
         <ResizablePanel
@@ -95,14 +95,6 @@ export default function Sidebar({
                 isCollapsed={isCollapsed}
                 links={[
                   {
-                    title: "Profile",
-                    href: "/profile",
-                    variant: pathname.startsWith("/profile")
-                      ? "default"
-                      : "ghost",
-                    icon: User
-                  },
-                  {
                     title: "Settings",
                     href: "/settings",
                     variant: pathname.startsWith("/settings")
@@ -136,8 +128,8 @@ export default function Sidebar({
         <ResizableHandle withHandle className="hidden sm:flex" />
         <ResizablePanel
           className={cn(
-            "max-h-full",
-            pathname.startsWith("/chat") && "container"
+            "h-full"
+            // pathname.startsWith("/chat") && "container"
           )}
         >
           {children}

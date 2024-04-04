@@ -5,6 +5,7 @@ export const SelectInput = createStyle({
     w: "$full"
   },
   fontFamily: "NotoSans_500Medium",
+  textTransform: "capitalize",
   pointerEvents: "none",
   flex: 1,
   h: "$full",

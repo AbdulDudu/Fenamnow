@@ -1,6 +1,8 @@
 import { getStreamChatClient } from "@/lib/helpers/getstream";
 import { useChatProviderContext } from "@/lib/providers/chat";
+import { toast } from "@backpackapp-io/react-native-toast";
 import { Button, ButtonIcon, HStack, View } from "@gluestack-ui/themed";
+import { Audio } from "expo-av";
 import { set } from "lodash";
 import { Mic, Send } from "lucide-react-native";
 import moment from "moment";
@@ -28,6 +30,7 @@ export const CustomMessageInput = (props: any) => {
   const { channel } = useChatProviderContext();
 
   const sendVoiceMessage = async (uri: string) => {
+    const audioTitle = new Date().toTimeString();
     // @ts-ignore
     const message: MessageResponse = {
       created_at: moment().toString(),
@@ -36,7 +39,7 @@ export const CustomMessageInput = (props: any) => {
           asset_url: uri,
           file_size: 200,
           mime_type: "audio/mp4",
-          title: "test.mp4",
+          title: `${audioTitle}.mp4`,
           type: "voice-message",
           audio_length: moment(recordingDurationInMS).format("m:ss")
         }
@@ -50,7 +53,7 @@ export const CustomMessageInput = (props: any) => {
     // @ts-ignore
     updateMessage(message);
 
-    const res = await channel?.sendFile(uri, "test.mp4", "audio/mp4");
+    const res = await channel?.sendFile(uri, `${audioTitle}.mp4`, "audio/mp4");
     const {
       created_at,
       html,
@@ -68,11 +71,23 @@ export const CustomMessageInput = (props: any) => {
     await channel?.sendMessage(messageWithoutReservedFields);
   };
   const onStartRecord = async () => {
-    setRecordingActive(true);
-    await audioRecorderPlayer.startRecorder();
-    audioRecorderPlayer.addRecordBackListener(e => {
-      setRecordingDurationInMS(Math.floor(e.currentPosition));
-    });
+    try {
+      const { granted } = await Audio.getPermissionsAsync();
+      if (!granted) {
+        const { granted } = await Audio.requestPermissionsAsync();
+        if (!granted) {
+          toast.error("Microphone permissions not granted");
+        }
+        return;
+      }
+      setRecordingActive(true);
+      await audioRecorderPlayer.startRecorder();
+      audioRecorderPlayer.addRecordBackListener(e => {
+        setRecordingDurationInMS(Math.floor(e.currentPosition));
+      });
+    } catch (error) {
+      toast.error("Error starting recording");
+    }
   };
 
   const onStopRecord = async () => {
