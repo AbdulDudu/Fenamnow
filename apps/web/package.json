@@ -13,6 +13,7 @@
   "dependencies": {
     "@fenamnow/types": "*",
     "@fenamnow/ui": "*",
+    "@next/third-parties": "^14.1.4",
     "@portabletext/react": "^3.0.11",
     "@react-google-maps/api": "^2.19.2",
     "@sanity/client": "^6.15.4",

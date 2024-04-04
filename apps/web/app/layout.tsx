@@ -2,6 +2,7 @@ import "@fenamnow/ui/globals.css";
 import { TailwindIndicator } from "@fenamnow/ui/components/ui/tailwind-indicator";
 import { ThemeProvider } from "@fenamnow/ui/components/ui/theme-provider";
 import { cn } from "@fenamnow/ui/lib/utils";
+import { GoogleTagManager } from "@next/third-parties/google";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import useSupabaseServer from "@web/lib/helpers/supabase/server-client";
 import { ChatProvider } from "@web/modules/common/shared/providers/chat";
@@ -53,6 +54,7 @@ export default async function RootLayout({
   return (
     <ReactQueryClientProvider>
       <html lang="en" suppressHydrationWarning>
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID!} />
         <body
           className={cn(
             "min-h-screen font-sans antialiased",
