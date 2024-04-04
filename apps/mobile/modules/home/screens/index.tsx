@@ -182,22 +182,16 @@ function HomeScreen() {
                 <ButtonText>Lease</ButtonText>
               </Button>
             </HStack>
-
             {/* Location selects */}
             <VStack justifyContent="space-between" gap="$4">
               {/* Property type */}
               <Select
                 onValueChange={value => {
-                  if (value == "all") {
-                    router.setParams({ property_type: "" });
-                    return;
-                  }
                   router.setParams({ property_type: value });
                 }}
               >
                 <SelectTrigger variant="outline">
                   <SelectInput
-                    textTransform="capitalize"
                     value={property_type}
                     placeholder="Select property type"
                   />
@@ -212,7 +206,7 @@ function HomeScreen() {
                     <SelectDragIndicatorWrapper>
                       <SelectDragIndicator />
                     </SelectDragIndicatorWrapper>
-                    <SelectItem label="All" value="all" />
+                    <SelectItem label="All" value="All" />
                     {propertyTypesData?.data &&
                       propertyTypesData?.data.map(type => {
                         if (
@@ -225,7 +219,7 @@ function HomeScreen() {
                             <SelectItem
                               key={type.id}
                               label={capitalize(type.name)}
-                              value={type.name}
+                              value={capitalize(type.name)}
                             />
                           );
                         }
@@ -239,7 +233,7 @@ function HomeScreen() {
                             <SelectItem
                               key={type.id}
                               label={capitalize(type.name)}
-                              value={type.name}
+                              value={capitalize(type.name)}
                             />
                           );
                         }
@@ -248,7 +242,7 @@ function HomeScreen() {
                             <SelectItem
                               key={type.id}
                               label={capitalize(type.name)}
-                              value={type.name}
+                              value={capitalize(type.name)}
                             />
                           );
                         }
@@ -259,8 +253,8 @@ function HomeScreen() {
               {/* City selection */}
               <Select
                 onValueChange={value => {
-                  if (value == "all") {
-                    router.setParams({ city: "", community: "" });
+                  if (value == "All") {
+                    router.setParams({ city: "All", community: "" });
                     return;
                   }
                   router.setParams({ city: value, community: "" });
@@ -279,7 +273,7 @@ function HomeScreen() {
                     <SelectDragIndicatorWrapper>
                       <SelectDragIndicator />
                     </SelectDragIndicatorWrapper>
-                    <SelectItem label="All" value="all" />
+                    <SelectItem label="All" value="All" />
                     {cities?.data?.map(foundCities => (
                       <SelectItem
                         key={foundCities.id}
@@ -294,13 +288,9 @@ function HomeScreen() {
               {/* Community selection */}
               <Select
                 onValueChange={value => {
-                  if (value == "all") {
-                    router.setParams({ community: "" });
-                    return;
-                  }
                   router.setParams({ community: value });
                 }}
-                isDisabled={city == "" || city == null}
+                isDisabled={city == "" || city == null || city == "All"}
               >
                 <SelectTrigger variant="outline">
                   <SelectInput
@@ -318,8 +308,8 @@ function HomeScreen() {
                     <SelectDragIndicatorWrapper>
                       <SelectDragIndicator />
                     </SelectDragIndicatorWrapper>
-                    <SelectItem label="All" value="all" />
-                    {city == "" || city == null || city == "all"
+                    <SelectItem label="All" value="All" />
+                    {city == "" || city == null || city == "All"
                       ? null
                       : communities?.data?.map(community => (
                           <SelectItem

@@ -43,7 +43,7 @@ export default function PropertyCard({
   isDashboard?: boolean;
 }) {
   return (
-    <div className="bg-accent/30 hover:bg-accent h-[340px] w-full rounded-lg transition-colors ease-in-out">
+    <div className="bg-accent dark:bg-accent/40 hover:dark:bg-accent hover:bg-accent/30 h-[340px] w-full rounded-lg transition-colors ease-in-out">
       <Link
         href={`/property/${id}`}
         className={isDashboard ? "pointer-events-none" : ""}
@@ -65,7 +65,7 @@ export default function PropertyCard({
       <div className="flex w-full flex-col justify-between gap-y-1 px-4 py-1">
         {/* Price, lease duration and menu button */}
         <div className="flex w-full items-center justify-between">
-          <p className="font-bold text-inherit">
+          <p className="text-lg font-bold">
             ${price?.toLocaleString("en-GB")}
             {lease_duration && (
               <span className="ml-1 text-sm font-semibold opacity-75">
@@ -133,7 +133,7 @@ export default function PropertyCard({
             </p>
           </div>
         </div>
-        <Badge className="my-1 max-w-max self-end capitalize" variant="outline">
+        <Badge className="my-1 max-w-max self-end capitalize">
           {property_type}
         </Badge>
       </div>

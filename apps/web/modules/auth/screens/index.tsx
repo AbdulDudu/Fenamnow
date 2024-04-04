@@ -98,9 +98,9 @@ export default function AuthScreen({ path }: Props) {
                 <FcGoogle className="mr-2" />
                 Continue with Google
               </Button>
-              <Button className="bg-black font-semibold text-white hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-[#e5e5e5]">
+              {/* <Button className="bg-black font-semibold text-white hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-[#e5e5e5]">
                 <FaApple className="mr-2" /> Continue with Apple
-              </Button>
+              </Button> */}
             </div>
             {/* Redirect */}
             <p className="text-center">
@@ -117,7 +117,7 @@ export default function AuthScreen({ path }: Props) {
           </>
         )}
       </div>
-      <div className="bg-background hidden h-full w-2/3 border-l md:flex"></div>
+      <div className="hidden h-full w-2/3 border-l bg-[url('https://images.unsplash.com/photo-1565402170291-8491f14678db?q=80&w=3434&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover md:flex"></div>
     </div>
   );
 }

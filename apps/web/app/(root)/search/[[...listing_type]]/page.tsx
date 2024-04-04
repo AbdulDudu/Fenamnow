@@ -15,6 +15,7 @@ import { capitalize } from "lodash";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 
+export const dynamic = "force-dynamic";
 export async function generateMetadata({
   params
 }: SearchScreenProps): Promise<Metadata> {
@@ -39,26 +40,5 @@ export default async function SearchPage({
   params,
   searchParams
 }: SearchScreenProps) {
-  const cookieStore = cookies();
-  const supabase = useSupabaseServer(cookieStore);
-  const queryClient = new QueryClient();
-
-  const {
-    data: { session }
-  } = await supabase.auth.getSession();
-
-  const listing_type = params.listing_type;
-  await prefetchQuery(
-    queryClient,
-    getProperties({ client: supabase, listing_type, session, ...searchParams })
-  );
-
-  await prefetchQuery(queryClient, getLeaseDurations({ client: supabase }));
-  await prefetchQuery(queryClient, getPropertyTypes({ client: supabase }));
-
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <SearchScreen params={params} searchParams={searchParams} />
-    </HydrationBoundary>
-  );
+  return <SearchScreen />;
 }

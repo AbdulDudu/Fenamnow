@@ -1,4 +1,4 @@
-import ProfileScreen from "@web/modules/dashboard/screens/profile";
+import ProfileScreen from "@web/modules/dashboard/settings/components/profile";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -18,6 +18,7 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import useSupabaseBrowser from "@web/lib/helpers/supabase/browser-client";
 import { getLocations } from "@web/lib/queries/location";
 import { getPropertyTypes } from "@web/lib/queries/properties";
+import { motion } from "framer-motion";
 import { capitalize } from "lodash";
 import { Search } from "lucide-react";
 import Link from "next/link";
@@ -35,6 +36,7 @@ export default function SearchBox() {
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchString);
+
       params.set(name, value);
       if (value == "all") {
         params.delete(name);
@@ -50,29 +52,47 @@ export default function SearchBox() {
   const city = new URLSearchParams(searchString).get("city");
 
   return (
-    <div className="flex w-full flex-col items-start md:w-1/2">
+    <motion.div
+      className="z-10 flex w-full flex-col items-start md:w-1/2"
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: 1, y: 0, dur: 400 }}
+      transition={{ delay: 1 }}
+    >
       <ToggleGroup
         type="single"
         value={searchRoute}
         onValueChange={(value: string) => {
           setSearchRoute(value);
         }}
+        className="bg-accent rounded-t-xl rounded-tl-xl p-2"
       >
-        <ToggleGroupItem value="rental" aria-label="Toggle Rent">
-          <p>Rent</p>
+        <ToggleGroupItem
+          value="rental"
+          className="data-[state=on]:bg-primary data-[state=off]:bg-accent data-[state=off]:text-primary data-[state=on]:text-white"
+          aria-label="Toggle Rent"
+        >
+          Rent
         </ToggleGroupItem>
-        <ToggleGroupItem value="sale" aria-label="Toggle Buy">
-          <p>Buy</p>
+        <ToggleGroupItem
+          value="sale"
+          className="data-[state=on]:bg-primary data-[state=off]:bg-accent data-[state=off]:text-primary data-[state=on]:text-white"
+          aria-label="Toggle Buy"
+        >
+          Buy
         </ToggleGroupItem>
-        <ToggleGroupItem value="lease" aria-label="Toggle Lease">
-          <p>Lease</p>
+        <ToggleGroupItem
+          value="lease"
+          className="data-[state=on]:bg-primary data-[state=off]:bg-accent data-[state=off]:text-primary data-[state=on]:text-white"
+          aria-label="Toggle Lease"
+        >
+          Lease
         </ToggleGroupItem>
       </ToggleGroup>
-      <div className="bg-accent flex h-32 w-full flex-col items-end justify-center space-y-2 rounded-xl p-4">
+      <div className="bg-accent flex h-40 w-full flex-col items-end justify-between space-y-2 rounded-b-xl rounded-r-xl p-4">
         <div className="flex w-full items-center space-x-4">
           {/* Property type */}
           <div className="w-1/3">
-            <Label>Property type</Label>
+            <Label className="font-semibold">Property type</Label>
             <Select
               defaultValue="all"
               onValueChange={value => {
@@ -101,7 +121,7 @@ export default function SearchBox() {
 
           {/* City */}
           <div className="w-1/3">
-            <Label>City</Label>
+            <Label className="font-semibold">City</Label>
             <Select
               defaultValue="all"
               onValueChange={value => {
@@ -125,7 +145,7 @@ export default function SearchBox() {
           </div>
           {/* Community */}
           <div className="w-1/3">
-            <Label>Community</Label>
+            <Label className="font-semibold">Community</Label>
             <Select
               defaultValue="all"
               onValueChange={value => {
@@ -154,12 +174,12 @@ export default function SearchBox() {
           </div>
         </div>
         <Button asChild>
-          <Link href={`/search/${searchRoute}?${searchString}`}>
+          <Link href={`/search/${searchRoute}?page=1&${searchString}`}>
             <Search className="mr-2" />
             Search
           </Link>
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -8,13 +8,13 @@ import { ChatProvider } from "@web/modules/common/shared/providers/chat";
 import { ReactQueryClientProvider } from "@web/modules/common/shared/providers/query";
 import { SessionProvider } from "@web/modules/common/shared/providers/session";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Noto_Sans } from "next/font/google";
 import { cookies } from "next/headers";
 import { Toaster } from "sonner";
 
-const inter = Inter({
+const notoSans = Noto_Sans({
   subsets: ["latin"],
-  variable: "--font-inter"
+  variable: "--font-noto-sans"
 });
 
 export const metadata: Metadata = {
@@ -54,7 +54,10 @@ export default async function RootLayout({
     <ReactQueryClientProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={cn("min-h-screen font-sans antialiased", inter.variable)}
+          className={cn(
+            "min-h-screen font-sans antialiased",
+            notoSans.variable
+          )}
         >
           <ThemeProvider
             attribute="class"

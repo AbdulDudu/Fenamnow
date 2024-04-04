@@ -1,4 +1,4 @@
-import SettingsScreen from "@web/modules/dashboard/screens/settings";
+import SettingsScreen from "@web/modules/dashboard/settings/screens";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

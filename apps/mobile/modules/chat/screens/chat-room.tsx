@@ -144,6 +144,7 @@ export default function ChatRoomScreen() {
           Card={MessageAttachment}
           keyboardVerticalOffset={16}
           Input={() => null}
+          allowThreadMessagesInChannel={false}
         >
           <MessageList
             initialScrollToFirstUnreadMessage
@@ -159,7 +160,6 @@ export default function ChatRoomScreen() {
             }}
           />
           <MessageInput Input={CustomMessageInput} />
-          <Thread />
         </Channel>
         <Modal
           isOpen={showBlockModal}

@@ -141,7 +141,7 @@ export default function AccountAndSecuritySettings() {
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-[540px]">
       <CardHeader>
         <CardTitle>Account and Security</CardTitle>
         <CardDescription>Update your account settings</CardDescription>

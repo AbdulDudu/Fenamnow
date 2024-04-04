@@ -1,15 +1,20 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { FaCheck } from "react-icons/fa";
 import { MdOutlineConnectWithoutContact } from "react-icons/md";
 import { VscWorkspaceTrusted } from "react-icons/vsc";
 
 export default function Features() {
   return (
-    <div className="my-14 w-full lg:h-[60vh]">
+    <motion.div
+      className="my-14 w-full lg:h-[60vh]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
       <div className="container flex size-full flex-col items-center justify-center space-y-14">
-        <h3>Features</h3>
-        <p className="text-lg font-semibold">
-          What you get by joining Fenamnow
-        </p>
+        <h2>Features</h2>
+        <h3 className="font-semibold">What you get by joining Fenamnow</h3>
         <div className="grid-col-1 md:grid-col-2 grid size-full lg:grid-cols-3">
           <div className="flex size-full flex-col items-center space-y-10">
             <h4>Connect</h4>
@@ -48,6 +53,6 @@ export default function Features() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

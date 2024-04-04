@@ -22,9 +22,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import AddressForm from "../../components/properties/address-form";
-import ListingDetailsForm from "../../components/properties/listing-details-form";
-import MediaForm from "../../components/properties/media-form";
+import AddressForm from "../components/address-form";
+import ListingDetailsForm from "../components/listing-details-form";
+import MediaForm from "../components/media-form";
 
 export default function PropertyEditScreen({ id }: { id?: number }) {
   const supabase = useSupabaseBrowser();
@@ -204,46 +204,45 @@ export default function PropertyEditScreen({ id }: { id?: number }) {
 
   const { data: amenities } = useQuery(getAmenities({ client: supabase }));
   return (
-    <div className="flex max-h-[90vh] flex-col overflow-y-hidden">
+    <div className="flex h-[94vh] flex-col overflow-y-hidden">
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="no-scrollbar container flex size-full flex-col justify-start space-y-4 overflow-y-auto pt-8"
-        >
-          <Button asChild variant="link" className="size-max p-0">
-            <Link href={id ? "../" : "/properties"}>
-              <ChevronLeftIcon />
-              Back to properties
-            </Link>
-          </Button>
-          <div>
-            <h3>{id ? "Edit Property" : "Add New Property"}</h3>
-            <p>
-              {id
-                ? "Changes made here will be updated after saving"
-                : "Fill in all required fields to add new property"}
-            </p>
-          </div>
-          <AddressForm
-            form={form}
-            openForm={openForm}
-            setOpenForm={setOpenForm}
-          />
-          <ListingDetailsForm
-            form={form}
-            openForm={openForm}
-            setOpenForm={setOpenForm}
-            propertyTypes={propertyTypes || []}
-            leaseDurations={leaseDurations || []}
-            amenities={amenities || []}
-          />
-          <MediaForm
-            form={form}
-            openForm={openForm}
-            setOpenForm={setOpenForm}
-            savingProperty={savingProperty}
-          />
-        </form>
+        <div className="no-scrollbar container flex size-full flex-col justify-start space-y-4 overflow-y-auto pt-8">
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Button asChild variant="link" className="size-max p-0">
+              <Link href={id ? "../" : "/properties"}>
+                <ChevronLeftIcon />
+                Back to properties
+              </Link>
+            </Button>
+            <div>
+              <h3>{id ? "Edit Property" : "Add New Property"}</h3>
+              <p>
+                {id
+                  ? "Changes made here will be updated after saving"
+                  : "Fill in all required fields to add new property"}
+              </p>
+            </div>
+            <AddressForm
+              form={form}
+              openForm={openForm}
+              setOpenForm={setOpenForm}
+            />
+            <ListingDetailsForm
+              form={form}
+              openForm={openForm}
+              setOpenForm={setOpenForm}
+              propertyTypes={propertyTypes || []}
+              leaseDurations={leaseDurations || []}
+              amenities={amenities || []}
+            />
+            <MediaForm
+              form={form}
+              openForm={openForm}
+              setOpenForm={setOpenForm}
+              savingProperty={savingProperty}
+            />
+          </form>
+        </div>
       </Form>
     </div>
   );

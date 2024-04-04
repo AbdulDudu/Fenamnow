@@ -7,8 +7,8 @@ import { createChatToken } from "@web/lib/queries/chats";
 import { useSession } from "@web/modules/common/shared/providers/session";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import ChatsList from "../../components/chats/list";
-import ChatRoom from "../../components/chats/room";
+import ChatsList from "./list";
+import ChatRoom from "./room";
 
 export default function ChatsScreen() {
   const { session } = useSession();

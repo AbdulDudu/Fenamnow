@@ -24,6 +24,9 @@ export default function ResultsMap({
     []
   );
 
+  if (properties?.length == 0) {
+    return <div className="h-full w-1/2 border border-red-500"></div>;
+  }
   return (
     <div className={cn("h-full w-1/2", className)}>
       {isLoaded && (

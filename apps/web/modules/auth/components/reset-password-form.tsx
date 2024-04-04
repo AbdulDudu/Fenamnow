@@ -9,9 +9,8 @@ import {
   FormLabel,
   FormMessage
 } from "@fenamnow/ui/components/ui/form";
-import { Input, PasswordInput } from "@fenamnow/ui/components/ui/input";
+import { PasswordInput } from "@fenamnow/ui/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EyeClosedIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import useSupabaseBrowser from "@web/lib/helpers/supabase/browser-client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -32,7 +31,6 @@ const formSchema = z.object({
 export default function ResetPasswordForm() {
   const router = useRouter();
   const supabase = useSupabaseBrowser();
-  const [showPassword, setShowPassword] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

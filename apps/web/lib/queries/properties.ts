@@ -13,17 +13,13 @@ export function getProperties({
   isAdmin = false,
   bedrooms,
   bathrooms,
-  // created_at,
   city,
   community,
   price_range,
   property_types,
   lease_durations,
-  // map_address,
-  // date_available,
   furnished,
   negotiable
-  // status,
 }: {
   client: TypedSupabaseClient;
   session?: Session | null | undefined;

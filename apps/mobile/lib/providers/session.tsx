@@ -13,6 +13,7 @@ import * as WebBrowser from "expo-web-browser";
 import React, { createContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { QuickSqliteClient } from "stream-chat-expo";
+import { createChatToken } from "../data/chat";
 import { getStreamChatClient } from "../helpers/getstream";
 import { supabase } from "../helpers/supabase";
 
@@ -117,7 +118,7 @@ export const SessionProvider = ({
     password: string;
   }) => {
     const redirectTo = makeRedirectUri();
-    const { error } = await supabase.auth.signUp({
+    const { error, data } = await supabase.auth.signUp({
       email: email,
       password: password,
       options: {
@@ -129,6 +130,9 @@ export const SessionProvider = ({
     });
 
     if (error) return error;
+
+    await createChatToken(data?.user?.id!);
+
     toast("A confirmation email has been sent", {
       position: ToastPosition.BOTTOM
     });

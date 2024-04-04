@@ -14,8 +14,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeClosedIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import useSupabaseBrowser from "@web/lib/helpers/supabase/browser-client";
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod";
 
 const formSchema = z.object({
@@ -39,10 +40,6 @@ export default function RegisterForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    // console.log(values);
-
     try {
       const { error } = await supabase.auth.signUp({
         email: values.email,
@@ -57,10 +54,9 @@ export default function RegisterForm() {
       if (error) {
         throw error;
       }
-
       router.refresh();
     } catch (error) {
-      // console.log(error);
+      toast.error("Error encounted during registeration");
     }
   }
 

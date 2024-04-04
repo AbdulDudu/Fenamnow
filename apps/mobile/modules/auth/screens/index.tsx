@@ -117,8 +117,8 @@ export default function AuthScreen() {
           email: data.email,
           password: data.password,
           full_name: data?.full_name!
-        }).then((res: any) => {
-          console.log(res);
+        }).catch(e => {
+          console.log(e);
           toast.error(`Error encountered during registeration`);
         });
       }

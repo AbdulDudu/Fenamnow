@@ -43,23 +43,23 @@ export default function Navbar({ isDashboard }: { isDashboard?: boolean }) {
               variant={searchPath == "rental" ? "secondary" : "ghost"}
               asChild
             >
-              <Link href="/search/rental">Rent</Link>
+              <Link href="/search/rental?page=1">Rent</Link>
             </Button>
             <Button
               variant={searchPath == "sale" ? "secondary" : "ghost"}
               asChild
             >
-              <Link href="/search/sale">Buy</Link>
+              <Link href="/search/sale?page=1">Buy</Link>
             </Button>
             <Button
               variant={searchPath == "lease" ? "secondary" : "ghost"}
               asChild
             >
-              <Link href="/search/lease">Lease</Link>
+              <Link href="/search/lease?page=1">Lease</Link>
             </Button>
 
             <Button
-              variant={searchPath == "lease" ? "secondary" : "ghost"}
+              variant={searchPath == "blog" ? "secondary" : "ghost"}
               asChild
             >
               <Link href="/blog">Blog</Link>
@@ -74,7 +74,7 @@ export default function Navbar({ isDashboard }: { isDashboard?: boolean }) {
         >
           {session !== undefined && session === null ? (
             <div className="hidden space-x-2 md:flex">
-              <Button asChild variant="outline">
+              <Button asChild variant="secondary">
                 <Link
                   href={
                     pathname.split("/")[1] === "property"
@@ -103,7 +103,7 @@ export default function Navbar({ isDashboard }: { isDashboard?: boolean }) {
                   </Link>
                 </Button>
               )}
-              <NavDropdown metadata={session.user.user_metadata} />
+              <NavDropdown />
             </div>
           )}
         </div>

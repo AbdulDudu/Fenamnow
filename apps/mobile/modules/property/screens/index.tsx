@@ -573,7 +573,10 @@ export default function PropertyDetailsScreen() {
                             session?.user.id!
                           ]
                         });
-                        await channel.watch();
+                        await channel.watch().catch(e => {
+                          console.log(e);
+                        });
+                        // @ts-ignore
                         setChannel(channel);
                         router.navigate(`/chat/${channel?.cid}`);
                       }}

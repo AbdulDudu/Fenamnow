@@ -1,8 +1,10 @@
+import { StreamChatGenerics } from "@fenamnow/types/chat";
 import notifee from "@notifee/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { StreamChat } from "stream-chat";
 import { createChatToken } from "../data/chat";
 import { getStreamChatClient } from "../helpers/getstream";
 import { supabase } from "../helpers/supabase";
@@ -13,59 +15,15 @@ const requestNotificationPermission = async () => {
   const isEnabled =
     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  return isEnabled;
 };
-
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-  const messageId = remoteMessage.data?.id as string;
-  if (!messageId) {
-    return;
-  }
-  const chatToken = await AsyncStorage.getItem("chat_token");
-
-  const { data, error } = await supabase.auth.getUser();
-
-  if (error) {
-    return;
-  }
-
-  const user = {
-    id: data.user.id,
-    image: data.user.user_metadata.avatar_url,
-    name: data.user.user_metadata.full_name
-  };
-
-  await getStreamChatClient._setToken(user, chatToken);
-  const message = await getStreamChatClient.getMessage(messageId);
-
-  // create the android channel to send the notification to
-  const channelId = await notifee.createChannel({
-    id: "chat-messages",
-    name: "Chat Messages"
-  });
-
-  if (message.message.user?.name && message.message.text) {
-    const { stream, ...rest } = remoteMessage.data ?? {};
-    const data = {
-      ...rest,
-      ...((stream as unknown as Record<string, string> | undefined) ?? {}) // extract and merge stream object if present
-    };
-    await notifee.displayNotification({
-      android: {
-        channelId,
-        pressAction: {
-          id: "default"
-        }
-      },
-      body: message.message.text,
-      data,
-      title: "New message from " + message.message.user.name
-    });
-  }
-});
 
 export const useChatClient = () => {
   const [isConnecting, setIsConnecting] = useState(true);
   const [isClientReady, setIsClientReady] = useState<boolean>(false);
+  const [chatClient, setChatClient] =
+    useState<StreamChat<StreamChatGenerics> | null>(null);
   const { session } = useSession();
   const [unreadCount, setUnreadCount] = useState<number>();
   const unsubscribePushListenersRef = useRef<() => void>();
@@ -77,13 +35,21 @@ export const useChatClient = () => {
   });
 
   useEffect(() => {
+    const run = async () => {
+      await requestNotificationPermission();
+    };
+    run();
+    return unsubscribePushListenersRef?.current?.();
+  }, []);
+
+  useEffect(() => {
+    let chatToken;
     const initChat = async () => {
       unsubscribePushListenersRef.current?.();
 
       if (!data) return;
 
-      let chatToken = await AsyncStorage.getItem("chat_token");
-
+      chatToken = await AsyncStorage.getItem("chat_token");
       if (!chatToken) {
         const newToken = await createChatToken(data.user?.id!).then(data => {
           return data?.token;
@@ -99,11 +65,12 @@ export const useChatClient = () => {
           },
           chatToken
         )
-        .catch(async e => {
-          if (e.code == 401) {
-            await AsyncStorage.removeItem("chat_token");
-          }
+        .catch(e => {
           console.error(e);
+          if (e) {
+            AsyncStorage.removeItem("chat_token");
+            return;
+          }
         });
 
       setIsClientReady(true);
@@ -191,15 +158,6 @@ export const useChatClient = () => {
       getStreamChatClient && getStreamChatClient.disconnectUser();
     };
   }, [data]);
-
-  useEffect(() => {
-    const run = async () => {
-      await requestNotificationPermission();
-    };
-    run();
-    return unsubscribePushListenersRef.current;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const listener = getStreamChatClient?.on(e => {

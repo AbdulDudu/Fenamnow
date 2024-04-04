@@ -1,11 +1,10 @@
 import { ExpoConfig } from "@expo/config";
 
-const IS_DEV = process.env.APP_VARIANT == "development";
 export default (): ExpoConfig => ({
   name: "Fenamnow mobile",
   icon: "./assets/icon.png",
   slug: "fenamnow",
-  version: "1.1.8",
+  version: "1.2.1",
   scheme: "com.fenamnow",
   orientation: "portrait",
   userInterfaceStyle: "automatic",
@@ -39,6 +38,7 @@ export default (): ExpoConfig => ({
     }
   },
   android: {
+    icon: "./assets/icon.png",
     package: "com.fenamnow.android",
     adaptiveIcon: {
       backgroundColor: "#0e96f8",
@@ -51,7 +51,11 @@ export default (): ExpoConfig => ({
         apiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY!
       }
     },
-    permissions: ["RECORD_AUDIO"],
+    permissions: [
+      "android.permission.RECORD_AUDIO",
+      "android.permission.WRITE_EXTERNAL_STORAGE",
+      "android.permission.READ_EXTERNAL_STORAGE"
+    ],
     intentFilters: [
       {
         action: "VIEW",
@@ -60,17 +64,17 @@ export default (): ExpoConfig => ({
           {
             scheme: "https",
             host: "*.fenamnow.com",
-            pathPrefix: "/property"
+            pathPrefix: "/property/"
           },
           {
             scheme: "https",
             host: "*.fenamnow.com",
-            pathPrefix: "/search"
+            pathPrefix: "/search/"
           },
           {
             scheme: "https",
             host: "*.fenamnow.com",
-            pathPrefix: "/chat"
+            pathPrefix: "/chat/"
           }
         ],
         category: ["BROWSABLE", "DEFAULT"]
@@ -137,13 +141,15 @@ export default (): ExpoConfig => ({
     [
       "expo-camera",
       {
-        cameraPermission: "Allow $(PRODUCT_NAME) to access your camera."
+        cameraPermission:
+          "$(PRODUCT_NAME) needs access to your camera to add photos to your listing or conversations"
       }
     ],
     [
       "expo-av",
       {
-        microphonePermission: "Allow $(PRODUCT_NAME) to access your microphone."
+        microphonePermission:
+          "$(PRODUCT_NAME) needs access to your microphone to record audio messages"
       }
     ],
     [
@@ -177,6 +183,8 @@ export default (): ExpoConfig => ({
           deploymentTarget: "15.0"
         },
         android: {
+          minSdkVersion: 24,
+          kotlinVersion: "1.6.10",
           extraMavenRepos: [
             "../../../../node_modules/@notifee/react-native/android/libs"
           ]

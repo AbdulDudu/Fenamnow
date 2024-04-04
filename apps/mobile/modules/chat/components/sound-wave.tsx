@@ -1,6 +1,7 @@
 import { flex, sizes } from "@/modules/common/ui/global";
+import { HStack, View } from "@gluestack-ui/themed";
 import React, { useMemo } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 type Props = {
   assetUrl: string;
@@ -41,13 +42,12 @@ export default ({
         wavePattern={wavePattern}
       />
       <View
-        style={{
-          ...styles.progressBall,
-          backgroundColor: isMyMessage
-            ? colors.dark.secondaryLight
-            : colors.dark.active,
-          left: `${progressionPercentage}%`
-        }}
+        position="absolute"
+        rounded="$full"
+        width="$3"
+        height="$3"
+        backgroundColor={isMyMessage ? "$secondary400" : "$primary400"}
+        left={`${progressionPercentage - 2.5}%`}
       />
     </View>
   );
@@ -64,22 +64,25 @@ type GeneratedWaveProps = Pick<Props, "assetUrl"> & {
 const GeneratedWave = React.memo(
   ({ assetUrl, progressionPercentage, wavePattern }: GeneratedWaveProps) => {
     return (
-      <View key={assetUrl} style={flex.directionRowItemsContentCenter}>
+      <HStack
+        key={assetUrl}
+        flex={1}
+        alignItems="center"
+        justifyContent="space-between"
+      >
         {wavePattern.items.map((height, i) => {
           const alpha =
-            progressionPercentage >= ((i + 1) / BAR_AMOUNT) * 100 ? 0.75 : 0.25;
+            progressionPercentage >= ((i + 1) / BAR_AMOUNT) * 100 ? 0.75 : 0.5;
           return (
             <View
               key={i}
-              style={{
-                ...styles.barItem,
-                height,
-                backgroundColor: `rgba(255,255,255,${alpha})`
-              }}
+              width="$0.5"
+              height={height}
+              backgroundColor={`rgba(112,112,112,${alpha})`}
             />
           );
         })}
-      </View>
+      </HStack>
     );
   }
 );
@@ -109,12 +112,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: sizes.xl,
     paddingVertical: sizes.s
-  },
-  barItem: {
-    width: sizes.xs,
-    borderRadius: sizes.l,
-    backgroundColor: colors.dark.transparentPrimary,
-    marginHorizontal: 0.5
   },
   progressBall: {
     position: "absolute",

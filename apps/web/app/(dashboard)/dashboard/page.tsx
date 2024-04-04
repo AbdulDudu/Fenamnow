@@ -1,4 +1,4 @@
-import DashboardScreen from "@web/modules/dashboard/screens";
+import DashboardScreen from "@web/modules/dashboard/settings/components";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -23,6 +23,7 @@ import {
 import { Slider } from "@fenamnow/ui/components/ui/slider";
 import { Switch } from "@fenamnow/ui/components/ui/switch";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import { QueryClient } from "@tanstack/react-query";
 import useSupabaseBrowser from "@web/lib/helpers/supabase/browser-client";
 import { getLocations } from "@web/lib/queries/location";
 import {
@@ -34,25 +35,34 @@ import { FilterIcon, Minus, Plus, Space } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
 
-export default function SearchFilters() {
+export function SearchFilters({
+  newFilters,
+  setNewFilters,
+  // setFilters,
+  applyFilters
+}: {
+  newFilters: any;
+  setNewFilters: any;
+  // setFilters: any;
+  applyFilters: any;
+}) {
+  const queryClient = new QueryClient();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
+  const city = searchParams.get("city") || undefined;
+  const community = searchParams.get("community") || undefined;
   const supabase = useSupabaseBrowser();
-  const [newFilters, setNewFilters] = useState<any>({
-    listing_type: pathname.split("/")[2],
-    property_types: [],
-    lease_durations: [],
-    bedrooms: undefined,
-    bathrooms: undefined,
-    price_range: [1000, 500000],
-    community: searchParams.get("community") || undefined,
-    city: searchParams.get("city") || undefined,
-    furnished: true,
-    negotiable: true
-  });
 
+  const { data: propertyTypes } = useQuery(
+    getPropertyTypes({ client: supabase })
+  );
+  const { data: leaseDurations } = useQuery(
+    getLeaseDurations({ client: supabase })
+  );
+
+  // const [searchString, setSearchString] = useState("");
+  // const [searchRoute, setSearchRoute] = useState("rental");
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -73,22 +83,15 @@ export default function SearchFilters() {
     [searchParams]
   );
 
-  const city = searchParams.get("city") || undefined;
-  const community = searchParams.get("community") || undefined;
-
-  const { data: propertyTypes } = useQuery(
-    getPropertyTypes({ client: supabase })
-  );
-  const { data: leaseDurations } = useQuery(
-    getLeaseDurations({ client: supabase })
-  );
-
   return (
     <div className="grid h-max w-full grid-cols-3 gap-4">
       <Select
-        defaultValue={city}
-        value={city}
+        defaultValue={city || "all"}
+        value={city || "all"}
         onValueChange={value => {
+          // queryClient.invalidateQueries({
+          //   queryKey: ["search"]
+          // });
           router.push(`${pathname + "?" + createQueryString("city", value)}`);
         }}
       >
@@ -106,10 +109,13 @@ export default function SearchFilters() {
       </Select>
 
       <Select
-        defaultValue={community}
-        value={community}
+        defaultValue={community || "all"}
+        value={community || "all"}
         disabled={!city || !getLocations[city as string]}
         onValueChange={value => {
+          // queryClient.invalidateQueries({
+          //   queryKey: ["search"]
+          // })
           router.push(
             `${pathname + "?" + createQueryString("community", value)}`
           );
@@ -144,7 +150,7 @@ export default function SearchFilters() {
               Adjust these to help narrow down your search
             </SheetDescription>
           </SheetHeader>
-          <div className="flex size-full flex-col space-y-8 pt-6">
+          <div className="flex size-full flex-col space-y-12 pt-6">
             {/* Listing types */}
             <div className="w-full">
               <Label>Listing types</Label>
@@ -159,13 +165,13 @@ export default function SearchFilters() {
                 <div className="space-x-2">
                   <RadioGroupItem value="rental" />
                   <Label htmlFor="rental" className="capitalize">
-                    Rent
+                    Rental
                   </Label>
                 </div>
                 <div className="space-x-2">
                   <RadioGroupItem value="sale" />
                   <Label htmlFor="sale" className="capitalize">
-                    Buy
+                    Sale
                   </Label>
                 </div>
                 <div className="space-x-2">
@@ -337,7 +343,7 @@ export default function SearchFilters() {
               />
             </div>
             {/* Furnished status and Negotiable */}
-            <div className="flex w-full items-center justify-between">
+            <div className="flex w-full items-center space-x-4">
               <div className="flex flex-col space-y-2">
                 <Label>Furnished?</Label>
                 <Switch
@@ -363,6 +369,7 @@ export default function SearchFilters() {
               <Button
                 onClick={() => {
                   console.log(newFilters);
+                  applyFilters();
                 }}
               >
                 Apply

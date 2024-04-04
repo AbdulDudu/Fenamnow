@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-query";
 import useSupabaseServer from "@web/lib/helpers/supabase/server-client";
 import { getPropertyById } from "@web/lib/queries/properties";
-import PropertyEditScreen from "@web/modules/dashboard/screens/properties/edit";
+import PropertyEditScreen from "@web/modules/dashboard/properties/screens/edit";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 
