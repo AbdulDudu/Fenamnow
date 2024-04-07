@@ -92,7 +92,7 @@ export default function SearchBox() {
         <div className="flex w-full items-center space-x-4">
           {/* Property type */}
           <div className="w-1/3">
-            <Label className="font-semibold">Property type</Label>
+            <Label className="text-sm font-semibold">Property type</Label>
             <Select
               defaultValue="all"
               onValueChange={value => {
@@ -121,7 +121,7 @@ export default function SearchBox() {
 
           {/* City */}
           <div className="w-1/3">
-            <Label className="font-semibold">City</Label>
+            <Label className="text-sm font-semibold">City</Label>
             <Select
               defaultValue="all"
               onValueChange={value => {
@@ -145,7 +145,7 @@ export default function SearchBox() {
           </div>
           {/* Community */}
           <div className="w-1/3">
-            <Label className="font-semibold">Community</Label>
+            <Label className="text-sm font-semibold">Community</Label>
             <Select
               defaultValue="all"
               onValueChange={value => {

@@ -1,5 +1,9 @@
 import { prefetchQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { QueryClient } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient
+} from "@tanstack/react-query";
 import useSupabaseServer from "@web/lib/helpers/supabase/server-client";
 import { getProperties, getPropertyTypes } from "@web/lib/queries/properties";
 import HomeScreen from "@web/modules/home/screens";
@@ -46,5 +50,9 @@ export default async function HomePage() {
 
   await prefetchQuery(queryClient, getPropertyTypes({ client: supabase }));
 
-  return <HomeScreen />;
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <HomeScreen />
+    </HydrationBoundary>
+  );
 }

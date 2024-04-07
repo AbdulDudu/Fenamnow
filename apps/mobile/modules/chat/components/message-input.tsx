@@ -13,16 +13,18 @@ import {
   AutoCompleteInput,
   FileUploadPreview,
   ImageUploadPreview,
+  Reply,
   useMessageInputContext,
   useMessagesContext
 } from "stream-chat-expo";
-import CustomAttachButton from "./attach-button";
+import AttachmentButton from "./attachment-button";
 import AudioRecorder from "./audio-recorder";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
 export const CustomMessageInput = (props: any) => {
-  const { sendMessage, text } = useMessageInputContext();
+  const { sendMessage, text, imageUploads, fileUploads } =
+    useMessageInputContext();
   const [recordingActive, setRecordingActive] = useState(false);
   const [recordingDurationInMS, setRecordingDurationInMS] = useState(0);
 
@@ -30,7 +32,6 @@ export const CustomMessageInput = (props: any) => {
   const { channel } = useChatProviderContext();
 
   const sendVoiceMessage = async (uri: string) => {
-    const audioTitle = new Date().toTimeString();
     // @ts-ignore
     const message: MessageResponse = {
       created_at: moment().toString(),
@@ -39,7 +40,7 @@ export const CustomMessageInput = (props: any) => {
           asset_url: uri,
           file_size: 200,
           mime_type: "audio/mp4",
-          title: `${audioTitle}.mp4`,
+          title: "test.mp4",
           type: "voice-message",
           audio_length: moment(recordingDurationInMS).format("m:ss")
         }
@@ -53,7 +54,7 @@ export const CustomMessageInput = (props: any) => {
     // @ts-ignore
     updateMessage(message);
 
-    const res = await channel?.sendFile(uri, `${audioTitle}.mp4`, "audio/mp4");
+    const res = await channel?.sendFile(uri, "test.mp4", "audio/mp4");
     const {
       created_at,
       html,
@@ -70,6 +71,7 @@ export const CustomMessageInput = (props: any) => {
     // @ts-ignore
     await channel?.sendMessage(messageWithoutReservedFields);
   };
+
   const onStartRecord = async () => {
     try {
       const { granted } = await Audio.getPermissionsAsync();
@@ -109,6 +111,7 @@ export const CustomMessageInput = (props: any) => {
     <View width="$full" px="$4">
       <ImageUploadPreview />
       <FileUploadPreview />
+      <Reply />
       <HStack
         height={Platform.OS === "ios" ? "$20" : "$16"}
         justifyContent="space-between"
@@ -120,7 +123,7 @@ export const CustomMessageInput = (props: any) => {
         ) : (
           <>
             {/* Attachments button */}
-            <CustomAttachButton />
+            <AttachmentButton />
             {/* Text input */}
             <HStack
               width="$3/5"
@@ -132,7 +135,7 @@ export const CustomMessageInput = (props: any) => {
                 }
               }}
               rounded="$md"
-              px="$2"
+              p="$2"
               height="$12"
             >
               <AutoCompleteInput />
@@ -140,7 +143,7 @@ export const CustomMessageInput = (props: any) => {
           </>
         )}
         {/* Audio recording button */}
-        {!text ? (
+        {!text && !fileUploads.length && !imageUploads.length ? (
           <Button
             variant="link"
             onPressIn={() => onStartRecord()}
@@ -152,9 +155,7 @@ export const CustomMessageInput = (props: any) => {
           // Send message button
           <Button
             onPress={() => {
-              sendMessage({
-                text
-              });
+              sendMessage();
             }}
             variant="link"
           >

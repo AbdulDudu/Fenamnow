@@ -22,10 +22,11 @@ import { Image } from "expo-image";
 import { isEmpty } from "lodash";
 import { Mic, Pause, Play } from "lucide-react-native";
 import moment from "moment";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import {
   Avatar,
+  Card,
   CardProps,
   MessageStatus,
   MessageType,
@@ -35,18 +36,21 @@ import { flex, sizes } from "../../common/ui/global";
 import PeekabooView from "./peekaboo-view";
 import SoundWave from "./sound-wave";
 
-const MessageAttachment = ({
-  audio_length,
-  asset_url: assetUrl,
-  type,
-  user,
-  latitude,
-  longitude
-}: CardProps &
-  MessageType & {
-    latitude?: number;
-    longitude?: number;
-  }) => {
+const MessageAttachment = (
+  props: CardProps &
+    MessageType & {
+      latitude?: number;
+      longitude?: number;
+    }
+) => {
+  const {
+    audio_length,
+    asset_url: assetUrl,
+    type,
+    user,
+    latitude,
+    longitude
+  } = props;
   const audioLength = audio_length as string;
   const initialAudioLengthInSeconds = useMemo(
     () => parseDurationTextToMs(audioLength),
@@ -71,7 +75,7 @@ const MessageAttachment = ({
       } else if (status === AudioStatus.RESUMED) {
         setPaused(false);
       } else if (status === AudioStatus.STOPPED) {
-        onStopPlay();
+        await onStopPlay();
       }
     });
   };
@@ -102,84 +106,96 @@ const MessageAttachment = ({
     () => !isEmpty(message.deleted_at),
     [message.id]
   );
-  // @ts-ignore
-  if (type != "voice-message" && type != "location") return null;
 
   // @ts-ignore
   if (type == "location") {
     const mapApi = prepareStaticMapUrl(latitude, longitude);
     return (
-      <View p="$3" direction={isMyMessage ? "ltr" : "rtl"}>
+      <View p="$0.5" direction={isMyMessage ? "ltr" : "rtl"}>
         <TouchableOpacity onPress={() => goToGoogleMaps(latitude, longitude)}>
           <Image
             source={{ uri: mapApi }}
-            style={{ height: 200, width: 300, borderRadius: 8 }}
+            style={{ height: 200, width: 300, borderRadius: 12 }}
           />
         </TouchableOpacity>
       </View>
     );
   }
 
-  return (
-    <HStack p="$3">
-      <View>
-        <Avatar image={user?.image || ""} name={""} size={48} />
-        <Icon
-          as={Mic}
-          sx={{
-            _dark: {
-              color: isMyMessage ? "$white" : "$primary400"
-            }
-          }}
-          position="absolute"
-          bottom={0}
-          right={isMyMessage ? "-$2" : undefined}
-        />
-      </View>
-
-      <HStack p="$1" space="md" width="$64">
-        {isPlaying ? (
-          <Button variant="link" onPress={onPausePlay} isDisabled={!isPlaying}>
-            <ButtonIcon
-              as={Pause}
-              color={isMyMessage ? "$white" : "$primary400"}
-            />
-          </Button>
-        ) : (
-          <Button variant="link" onPress={onStartPlay} isDisabled={isPlaying}>
-            <ButtonIcon
-              as={Play}
-              color={isMyMessage ? "$white" : "$primary400"}
-            />
-          </Button>
-        )}
-
-        <View flex={1} justifyContent="space-between" height={58}>
-          <SoundWave
-            assetUrl={assetUrl as string}
-            isMyMessage={isMyMessage}
-            currentDurationInSeconds={currentDurationInSeconds}
-            currentPositionInSeconds={currentPositionInSeconds}
+  // @ts-ignore
+  if (type === "voice-message")
+    return (
+      <HStack p="$3">
+        <View>
+          <Avatar image={user?.image || ""} name={""} size={48} />
+          <Icon
+            as={Mic}
+            sx={{
+              _dark: {
+                color: "$white"
+              }
+            }}
+            position="absolute"
+            bottom={0}
+            right={isMyMessage ? "-$2" : undefined}
           />
-          <View style={flex.directionRowContentSpaceBetween}>
-            <Text>{currentPositionFormatted}</Text>
-            <View style={flex.directionRowItemsCenter}>
-              <PeekabooView isEnabled={message?.pinned && !isMessageDeleted}>
-                <Star
-                  pathFill={"transparent"}
-                  width={sizes.m}
-                  height={sizes.m}
-                  style={{ marginRight: sizes.s }}
-                />
-              </PeekabooView>
-              <Text>{durationFormatted}</Text>
-              <MessageStatus />
-            </View>
-          </View>
         </View>
+
+        <HStack p="$1" space="md" width="$64">
+          {isPlaying ? (
+            <Button variant="link" onPress={onPausePlay}>
+              <ButtonIcon
+                as={Pause}
+                size="xl"
+                sx={{
+                  _dark: {
+                    color: "$white"
+                  }
+                }}
+              />
+            </Button>
+          ) : (
+            <Button variant="link" onPress={onStartPlay}>
+              <ButtonIcon
+                as={Play}
+                size="xl"
+                sx={{
+                  _dark: {
+                    color: "$white"
+                  }
+                }}
+              />
+            </Button>
+          )}
+
+          <View flex={1} justifyContent="space-between" height="$16">
+            <SoundWave
+              assetUrl={assetUrl as string}
+              isMyMessage={isMyMessage}
+              currentDurationInSeconds={currentDurationInSeconds}
+              currentPositionInSeconds={currentPositionInSeconds}
+            />
+            <HStack justifyContent="space-between">
+              <Text>{currentPositionFormatted}</Text>
+              <View style={flex.directionRowItemsCenter}>
+                <PeekabooView isEnabled={message?.pinned && !isMessageDeleted}>
+                  <Star
+                    pathFill={"transparent"}
+                    width={sizes.m}
+                    height={sizes.m}
+                    style={{ marginRight: sizes.s }}
+                  />
+                </PeekabooView>
+                <Text>{durationFormatted}</Text>
+                <MessageStatus />
+              </View>
+            </HStack>
+          </View>
+        </HStack>
       </HStack>
-    </HStack>
-  );
+    );
+
+  return null;
 };
 
 export default MessageAttachment as React.ComponentType;

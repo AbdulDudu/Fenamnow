@@ -35,7 +35,7 @@ export default function Footer() {
             <div className="mt-4 flex flex-col space-y-6">
               <p className="font-bold">Resources</p>
               <Link href="/blog">Blog</Link>
-              <Link href="/press">Press</Link>
+              {/* <Link href="/press">Press</Link> */}
             </div>
           </div>
           <div className="mt-16 space-y-6 md:mt-4">

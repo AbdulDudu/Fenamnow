@@ -57,7 +57,7 @@ export default async function RootLayout({
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID!} />
         <body
           className={cn(
-            "min-h-screen font-sans antialiased",
+            "min-h-screen w-full font-sans antialiased",
             notoSans.variable
           )}
         >
