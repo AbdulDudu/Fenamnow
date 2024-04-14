@@ -7,8 +7,8 @@ export default function HomeScreen() {
   return (
     <main className="my-8 flex flex-col space-y-20">
       <HeroSection />
-      <Features />
       <PropertiesPreview />
+      <Features />
       <Newsletter />
     </main>
   );

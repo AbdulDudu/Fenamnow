@@ -27,7 +27,7 @@ export default function SearchScreen() {
     }>();
 
   const [filters, setFilters] = useState({
-    city: city !== "All" ? city?.toLowerCase() : "",
+    city: city?.toLowerCase(),
     community: community !== "All" ? community?.toLowerCase() : "",
     listing_type,
     property_types:

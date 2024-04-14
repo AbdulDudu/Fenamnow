@@ -37,7 +37,7 @@ export default function MapSheet({ data }: { data: any }) {
       </Button>
       <Actionsheet isOpen={showMapSheet} onClose={() => setShowMapSheet(false)}>
         <ActionsheetBackdrop />
-        <ActionsheetContent height="75%">
+        <ActionsheetContent maxHeight="75%">
           <ActionsheetDragIndicatorWrapper>
             <ActionsheetDragIndicator />
           </ActionsheetDragIndicatorWrapper>
@@ -76,7 +76,7 @@ export default function MapSheet({ data }: { data: any }) {
                       }}
                       onPress={() => {
                         setShowMapSheet(false);
-                        router.push(`/property/${location.id}`);
+                        router.navigate(`/property/${location.id}`);
                       }}
                     >
                       <VStack

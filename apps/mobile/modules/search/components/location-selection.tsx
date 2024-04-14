@@ -49,10 +49,6 @@ export default function LocationSelection({
           width="$full"
           defaultValue={city}
           onValueChange={value => {
-            if (value == "all") {
-              setCity("");
-              return;
-            }
             setCity(value);
           }}
         >
@@ -76,7 +72,7 @@ export default function LocationSelection({
               <SelectDragIndicatorWrapper>
                 <SelectDragIndicator />
               </SelectDragIndicatorWrapper>
-              <SelectItem label="All" value="all" />
+              <SelectItem label="All" value="All" />
               {cities?.data?.map(city => (
                 <SelectItem key={city.id} label={city.name} value={city.name} />
               ))}
@@ -113,6 +109,7 @@ export default function LocationSelection({
               <SelectDragIndicatorWrapper>
                 <SelectDragIndicator />
               </SelectDragIndicatorWrapper>
+              <SelectItem label="All" value="All" />
               {city &&
                 communities?.data?.map(community => (
                   <SelectItem

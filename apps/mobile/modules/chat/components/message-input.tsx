@@ -49,7 +49,7 @@ export const CustomMessageInput = (props: any) => {
       id: `random-id-${new Date().toTimeString()}`,
       status: "sending",
       type: "regular",
-      user: getStreamChatClient.user
+      user: getStreamChatClient?.user
     };
     // @ts-ignore
     updateMessage(message);
@@ -136,7 +136,7 @@ export const CustomMessageInput = (props: any) => {
               }}
               rounded="$md"
               p="$2"
-              height="$12"
+              height="$10"
             >
               <AutoCompleteInput />
             </HStack>

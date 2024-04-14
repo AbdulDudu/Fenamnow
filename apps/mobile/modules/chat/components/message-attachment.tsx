@@ -1,3 +1,4 @@
+import { getStreamChatClient } from "@/lib/helpers/getstream";
 import {
   AudioStatus,
   pausePlayer,
@@ -15,21 +16,20 @@ import {
   HStack,
   Icon,
   Text,
-  View,
-  VStack
+  View
 } from "@gluestack-ui/themed";
 import { Image } from "expo-image";
 import { isEmpty } from "lodash";
 import { Mic, Pause, Play } from "lucide-react-native";
 import moment from "moment";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import {
   Avatar,
-  Card,
   CardProps,
   MessageStatus,
   MessageType,
+  useChannelPreviewDisplayAvatar,
   useMessageContext
 } from "stream-chat-expo";
 import { flex, sizes } from "../../common/ui/global";
@@ -47,10 +47,11 @@ const MessageAttachment = (
     audio_length,
     asset_url: assetUrl,
     type,
-    user,
     latitude,
     longitude
   } = props;
+
+  const { channel } = useMessageContext();
   const audioLength = audio_length as string;
   const initialAudioLengthInSeconds = useMemo(
     () => parseDurationTextToMs(audioLength),
@@ -61,6 +62,8 @@ const MessageAttachment = (
   const [currentDurationInSeconds, setCurrentDurationInSeconds] =
     useState<number>(initialAudioLengthInSeconds);
   const { isMyMessage, message } = useMessageContext();
+
+  const displayAvatar = useChannelPreviewDisplayAvatar(channel!);
 
   const onStartPlay = async () => {
     if (!assetUrl) return null;
@@ -75,7 +78,7 @@ const MessageAttachment = (
       } else if (status === AudioStatus.RESUMED) {
         setPaused(false);
       } else if (status === AudioStatus.STOPPED) {
-        await onStopPlay();
+        onStopPlay();
       }
     });
   };
@@ -121,13 +124,20 @@ const MessageAttachment = (
       </View>
     );
   }
-
   // @ts-ignore
   if (type === "voice-message")
     return (
       <HStack p="$3">
         <View>
-          <Avatar image={user?.image || ""} name={""} size={48} />
+          <Avatar
+            image={
+              isMyMessage
+                ? (getStreamChatClient?.user?.avatar_url as string)
+                : ""
+            }
+            name={displayAvatar.name as string}
+            size={48}
+          />
           <Icon
             as={Mic}
             sx={{

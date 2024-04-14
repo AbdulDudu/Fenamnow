@@ -89,7 +89,7 @@ export default function LocationInput({
       ?.sendMessage({
         attachments: [
           {
-            type: "location",
+            type: "map",
             latitude: lat || location.latitude,
             longitude: lng || location.longitude
           }
@@ -225,26 +225,6 @@ export default function LocationInput({
                 errorStyle: { color: "red" }
               }}
             />
-            {/* Map view */}
-            {/* <ActionsheetItem onPress={sendLocation}>
-            <ActionsheetIcon>
-              <Icon as={MapPin} color="$primary400" />
-            </ActionsheetIcon>
-
-            <ActionsheetItemText color="$primary400">
-              Send Current Location
-            </ActionsheetItemText>
-          </ActionsheetItem> */}
-
-            {/* <ActionsheetVirtualizedList
-              h="$56"
-              data={data}
-              initialNumToRender={5}
-              renderItem={({ item }) => <Item title={item.title} />}
-              keyExtractor={item => item.id}
-              getItemCount={getItemCount}
-              getItem={getItem}
-            /> */}
           </VStack>
         </ActionsheetContent>
       </Actionsheet>

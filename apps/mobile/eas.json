@@ -31,7 +31,6 @@
       "channel": "preview"
     },
     "production": {
-      "bun": "1.0.15",
       "distribution": "store",
       "autoIncrement": true,
       "channel": "production"

@@ -2,6 +2,7 @@ import { Button } from "@fenamnow/ui/components/ui/button";
 import { Textarea } from "@fenamnow/ui/components/ui/textarea";
 import { Send } from "lucide-react";
 import React from "react";
+import { useAudioRecorder } from "react-audio-voice-recorder";
 import {
   AttachmentPreviewList as DefaultAttachmentPreviewList,
   LinkPreviewList as DefaultLinkPreviewList,
@@ -18,6 +19,16 @@ export default function MessageInput() {
     LinkPreviewList = DefaultLinkPreviewList
   } = useComponentContext();
 
+  const {
+    startRecording,
+    stopRecording,
+    togglePauseResume,
+    recordingBlob,
+    isRecording,
+    isPaused,
+    recordingTime,
+    mediaRecorder
+  } = useAudioRecorder();
   return (
     <div className="flex min-h-max w-full flex-col items-center border p-4">
       <AttachmentPreviewList />

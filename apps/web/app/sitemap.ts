@@ -24,25 +24,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: "https://fenamnow.com/search/rental?page=1",
       lastModified: new Date(),
       changeFrequency: "daily",
-      priority: 0.8
+      priority: 1
     },
     {
       url: "https://fenamnow.com/search/sale?page=1",
       lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8
+      changeFrequency: "daily",
+      priority: 1
     },
     {
       url: "https://fenamnow.com/search/lease?page=1",
       lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8
+      changeFrequency: "daily",
+      priority: 1
     },
     {
       url: "https://fenamnow.com/blog",
       lastModified: new Date(),
       changeFrequency: "weekly",
-      priority: 0.5
+      priority: 1
     }
   ];
 }

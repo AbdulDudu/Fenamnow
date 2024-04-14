@@ -19,7 +19,6 @@ export default function Navbar({ isDashboard }: { isDashboard?: boolean }) {
   const layoutSegment = useSelectedLayoutSegment();
   const pathname = usePathname();
 
-  const [] = useState(false);
   const paths = pathname.split("/");
   const searchPath = pathname.split("/")[2];
   return (
@@ -40,7 +39,7 @@ export default function Navbar({ isDashboard }: { isDashboard?: boolean }) {
         </Link>
 
         {!isDashboard && (
-          <div className="hidden h-full w-1/3 items-center justify-between lg:flex">
+          <div className="hidden h-full w-1/3 items-center justify-between md:flex">
             <Button
               variant={searchPath == "rental" ? "secondary" : "ghost"}
               asChild
@@ -70,7 +69,7 @@ export default function Navbar({ isDashboard }: { isDashboard?: boolean }) {
         )}
         <div
           className={cn(
-            "flex h-full w-full items-center justify-between space-x-4",
+            "flex h-full items-center justify-between space-x-4",
             session !== undefined && session !== null && "justify-end"
           )}
         >
@@ -96,7 +95,7 @@ export default function Navbar({ isDashboard }: { isDashboard?: boolean }) {
               <ColorToggle />
             </div>
           ) : (
-            <div className="hidden items-center space-x-4 border border-red-500 md:flex">
+            <div className="hidden items-center space-x-4 md:flex">
               {layoutSegment == "properties" && (
                 <Button asChild>
                   <Link href="/properties/create">
