@@ -46,7 +46,7 @@ export default ({
         rounded="$full"
         width="$3"
         height="$3"
-        backgroundColor={isMyMessage ? "$secondary400" : "$primary400"}
+        backgroundColor={"$secondary400"}
         left={`${progressionPercentage - 2.5}%`}
       />
     </View>

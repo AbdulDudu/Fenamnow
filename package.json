@@ -27,8 +27,8 @@
     "seed": "cd supabase && DRY=0 npx tsx seed.mts"
   },
   "devDependencies": {
-    "@fenamnow/eslint-config": "*",
-    "@fenamnow/typescript-config": "*",
+    "@fenamnow/eslint-config": "workspace:*",
+    "@fenamnow/typescript-config": "workspace:*",
     "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
     "@snaplet/copycat": "^5.0.0",
     "@snaplet/seed": "^0.89.4",
@@ -48,5 +48,10 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "bun@1.0.15"
+  "overrides": {
+    "ajv": "8.12.0"
+  },
+  "dependencies": {
+    "next": "^14.2.1"
+  }
 }

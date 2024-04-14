@@ -31,14 +31,14 @@ export default function SearchPagination({ count }: { count: number }) {
 
   const page = parseInt(searchParams.get("page") || "0") || undefined;
   return (
-    <Pagination>
-      <PaginationContent>
+    <Pagination className="">
+      <PaginationContent className="">
         {count > 6 && (
           <PaginationItem>
             <PaginationPrevious href="#" />
           </PaginationItem>
         )}
-        {Array.from({ length: Math.ceil(count / 6) }).map((_, index) => (
+        {Array.from({ length: Math.ceil(count / 9) }).map((_, index) => (
           <PaginationItem key={`page-${index}`}>
             <PaginationLink
               href={
@@ -53,12 +53,12 @@ export default function SearchPagination({ count }: { count: number }) {
             </PaginationLink>
           </PaginationItem>
         ))}
-        {count / 6 > 3 && (
+        {count / 6 > 5 && (
           <PaginationItem>
             <PaginationEllipsis />
           </PaginationItem>
         )}
-        {count / 6 >= 3 && (
+        {count / 6 >= 5 && (
           <PaginationItem>
             <PaginationNext href="#" />
           </PaginationItem>

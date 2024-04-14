@@ -5,10 +5,10 @@ import PropertiesPreview from "../components/preview";
 
 export default function HomeScreen() {
   return (
-    <main className="my-8 space-y-20">
+    <main className="my-8 flex flex-col space-y-20">
       <HeroSection />
-      <Features />
       <PropertiesPreview />
+      <Features />
       <Newsletter />
     </main>
   );

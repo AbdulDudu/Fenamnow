@@ -1,3 +1,4 @@
+import { getStreamChatClient } from "@/lib/helpers/getstream";
 import {
   AudioStatus,
   pausePlayer,
@@ -15,8 +16,7 @@ import {
   HStack,
   Icon,
   Text,
-  View,
-  VStack
+  View
 } from "@gluestack-ui/themed";
 import { Image } from "expo-image";
 import { isEmpty } from "lodash";
@@ -29,24 +29,29 @@ import {
   CardProps,
   MessageStatus,
   MessageType,
+  useChannelPreviewDisplayAvatar,
   useMessageContext
 } from "stream-chat-expo";
 import { flex, sizes } from "../../common/ui/global";
 import PeekabooView from "./peekaboo-view";
 import SoundWave from "./sound-wave";
 
-const MessageAttachment = ({
-  audio_length,
-  asset_url: assetUrl,
-  type,
-  user,
-  latitude,
-  longitude
-}: CardProps &
-  MessageType & {
-    latitude?: number;
-    longitude?: number;
-  }) => {
+const MessageAttachment = (
+  props: CardProps &
+    MessageType & {
+      latitude?: number;
+      longitude?: number;
+    }
+) => {
+  const {
+    audio_length,
+    asset_url: assetUrl,
+    type,
+    latitude,
+    longitude
+  } = props;
+
+  const { channel } = useMessageContext();
   const audioLength = audio_length as string;
   const initialAudioLengthInSeconds = useMemo(
     () => parseDurationTextToMs(audioLength),
@@ -57,6 +62,8 @@ const MessageAttachment = ({
   const [currentDurationInSeconds, setCurrentDurationInSeconds] =
     useState<number>(initialAudioLengthInSeconds);
   const { isMyMessage, message } = useMessageContext();
+
+  const displayAvatar = useChannelPreviewDisplayAvatar(channel!);
 
   const onStartPlay = async () => {
     if (!assetUrl) return null;
@@ -102,84 +109,103 @@ const MessageAttachment = ({
     () => !isEmpty(message.deleted_at),
     [message.id]
   );
-  // @ts-ignore
-  if (type != "voice-message" && type != "location") return null;
 
   // @ts-ignore
   if (type == "location") {
     const mapApi = prepareStaticMapUrl(latitude, longitude);
     return (
-      <View p="$3" direction={isMyMessage ? "ltr" : "rtl"}>
+      <View p="$0.5" direction={isMyMessage ? "ltr" : "rtl"}>
         <TouchableOpacity onPress={() => goToGoogleMaps(latitude, longitude)}>
           <Image
             source={{ uri: mapApi }}
-            style={{ height: 200, width: 300, borderRadius: 8 }}
+            style={{ height: 200, width: 300, borderRadius: 12 }}
           />
         </TouchableOpacity>
       </View>
     );
   }
-
-  return (
-    <HStack p="$3">
-      <View>
-        <Avatar image={user?.image || ""} name={""} size={48} />
-        <Icon
-          as={Mic}
-          sx={{
-            _dark: {
-              color: isMyMessage ? "$white" : "$primary400"
+  // @ts-ignore
+  if (type === "voice-message")
+    return (
+      <HStack p="$3">
+        <View>
+          <Avatar
+            image={
+              isMyMessage
+                ? (getStreamChatClient?.user?.avatar_url as string)
+                : ""
             }
-          }}
-          position="absolute"
-          bottom={0}
-          right={isMyMessage ? "-$2" : undefined}
-        />
-      </View>
-
-      <HStack p="$1" space="md" width="$64">
-        {isPlaying ? (
-          <Button variant="link" onPress={onPausePlay} isDisabled={!isPlaying}>
-            <ButtonIcon
-              as={Pause}
-              color={isMyMessage ? "$white" : "$primary400"}
-            />
-          </Button>
-        ) : (
-          <Button variant="link" onPress={onStartPlay} isDisabled={isPlaying}>
-            <ButtonIcon
-              as={Play}
-              color={isMyMessage ? "$white" : "$primary400"}
-            />
-          </Button>
-        )}
-
-        <View flex={1} justifyContent="space-between" height={58}>
-          <SoundWave
-            assetUrl={assetUrl as string}
-            isMyMessage={isMyMessage}
-            currentDurationInSeconds={currentDurationInSeconds}
-            currentPositionInSeconds={currentPositionInSeconds}
+            name={displayAvatar.name as string}
+            size={48}
           />
-          <View style={flex.directionRowContentSpaceBetween}>
-            <Text>{currentPositionFormatted}</Text>
-            <View style={flex.directionRowItemsCenter}>
-              <PeekabooView isEnabled={message?.pinned && !isMessageDeleted}>
-                <Star
-                  pathFill={"transparent"}
-                  width={sizes.m}
-                  height={sizes.m}
-                  style={{ marginRight: sizes.s }}
-                />
-              </PeekabooView>
-              <Text>{durationFormatted}</Text>
-              <MessageStatus />
-            </View>
-          </View>
+          <Icon
+            as={Mic}
+            sx={{
+              _dark: {
+                color: "$white"
+              }
+            }}
+            position="absolute"
+            bottom={0}
+            right={isMyMessage ? "-$2" : undefined}
+          />
         </View>
+
+        <HStack p="$1" space="md" width="$64">
+          {isPlaying ? (
+            <Button variant="link" onPress={onPausePlay}>
+              <ButtonIcon
+                as={Pause}
+                size="xl"
+                sx={{
+                  _dark: {
+                    color: "$white"
+                  }
+                }}
+              />
+            </Button>
+          ) : (
+            <Button variant="link" onPress={onStartPlay}>
+              <ButtonIcon
+                as={Play}
+                size="xl"
+                sx={{
+                  _dark: {
+                    color: "$white"
+                  }
+                }}
+              />
+            </Button>
+          )}
+
+          <View flex={1} justifyContent="space-between" height="$16">
+            <SoundWave
+              assetUrl={assetUrl as string}
+              isMyMessage={isMyMessage}
+              currentDurationInSeconds={currentDurationInSeconds}
+              currentPositionInSeconds={currentPositionInSeconds}
+            />
+            <HStack justifyContent="space-between">
+              <Text>{currentPositionFormatted}</Text>
+              <View style={flex.directionRowItemsCenter}>
+                <PeekabooView isEnabled={message?.pinned && !isMessageDeleted}>
+                  <Star
+                    pathFill={"transparent"}
+                    width={sizes.m}
+                    height={sizes.m}
+                    style={{ marginRight: sizes.s }}
+                  />
+                </PeekabooView>
+                <Text>{durationFormatted}</Text>
+                <MessageStatus />
+              </View>
+            </HStack>
+          </View>
+        </HStack>
       </HStack>
-    </HStack>
-  );
+    );
+
+  return null;
 };
 
 export default MessageAttachment as React.ComponentType;

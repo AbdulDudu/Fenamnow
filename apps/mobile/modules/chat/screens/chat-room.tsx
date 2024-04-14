@@ -1,11 +1,8 @@
 import { getStreamChatClient } from "@/lib/helpers/getstream";
 import { useChatProviderContext } from "@/lib/providers/chat";
-import {
-  goToGoogleMaps,
-  prepareStaticMapUrl
-} from "@/lib/utils/go-to-googlemaps";
+import { pausePlayer, stopPlayer } from "@/lib/utils/audio-manager";
 import { Screen } from "@/modules/common/ui/screen";
-import { toast } from "@backpackapp-io/react-native-toast";
+import { AntDesign } from "@expo/vector-icons";
 import { useToken } from "@gluestack-style/react";
 import { OverlayProvider } from "@gluestack-ui/overlay";
 import {
@@ -25,14 +22,12 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Pressable,
   Text
 } from "@gluestack-ui/themed";
-import { Image } from "expo-image";
-import * as Location from "expo-location";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
-import { Ban, InfoIcon, MapPin, Share } from "lucide-react-native";
+import { Ban, InfoIcon } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
-import { TouchableOpacity } from "react-native";
 import { Video as VideoCompressor } from "react-native-compressor";
 import {
   Channel,
@@ -58,14 +53,13 @@ export default function ChatRoomScreen() {
   // @ts-ignore
   const title = useChannelPreviewDisplayName(channel!, 30);
   const { cid } = useGlobalSearchParams();
-  const primaryColor = useToken("colors", "primary500");
   const [showBlockModal, setShowBlockModal] = useState(false);
 
   const ref = React.useRef(null);
 
   useEffect(() => {
     const initChannel = async () => {
-      if (channel) {
+      if (channel?.cid == cid) {
         return;
       }
       const newChannel = getStreamChatClient.channel(
@@ -79,37 +73,57 @@ export default function ChatRoomScreen() {
       setChannel(newChannel);
     };
     initChannel();
-  }, [cid, channel, getStreamChatClient]);
+  }, [cid, channel]);
+
+  const doDocUploadRequest: NonNullable<
+    ChannelProps["doDocUploadRequest"]
+  > = async (file, channel) => {
+    if (!file.uri) {
+      throw new Error("Invalid file provided");
+    }
+    // check if it is a video file using the MIME type
+    if (file.mimeType?.startsWith("video/")) {
+      const result = await VideoCompressor.compress(file.uri, {
+        compressionMethod: "auto"
+      });
+      // set the local file uri to the compressed file
+      file.uri = result;
+    }
+
+    // send the file
+    return await channel.sendFile(file.uri, file.name, file.mimeType);
+  };
 
   if (!cid || !channel) {
     return (
-      <>
-        <Stack.Screen
-          listeners={{
-            beforeRemove: () => {
-              setChannel(undefined);
-            }
-          }}
-          options={{
-            title: "",
-            headerBackButtonMenuEnabled: true
-          }}
-        />
-      </>
+      <Stack.Screen
+        options={{
+          title: title || ""
+        }}
+      />
     );
   }
 
   return (
     <OverlayProvider>
       <Stack.Screen
-        listeners={{
-          beforeRemove: () => {
-            setChannel(undefined);
-          }
-        }}
         options={{
           title: title || "",
           headerBackButtonMenuEnabled: true,
+          headerLeft(props) {
+            return (
+              <Pressable
+                onPress={async () => {
+                  // setChannel(undefined);
+                  await stopPlayer();
+                  router.back();
+                }}
+                mr="$2"
+              >
+                <AntDesign name="arrowleft" size={24} color={props.tintColor} />
+              </Pressable>
+            );
+          },
           headerRight: () => (
             <Menu
               placement="bottom"
@@ -142,23 +156,11 @@ export default function ChatRoomScreen() {
           // @ts-ignore
           channel={channel!}
           Card={MessageAttachment}
-          keyboardVerticalOffset={16}
+          // keyboardVerticalOffset={16}
+          doDocUploadRequest={doDocUploadRequest}
           Input={() => null}
-          allowThreadMessagesInChannel={false}
         >
-          <MessageList
-            initialScrollToFirstUnreadMessage
-            myMessageTheme={{
-              messageSimple: {
-                content: {
-                  containerInner: {
-                    backgroundColor: primaryColor,
-                    borderColor: "transparent"
-                  }
-                }
-              }
-            }}
-          />
+          <MessageList initialScrollToFirstUnreadMessage />
           <MessageInput Input={CustomMessageInput} />
         </Channel>
         <Modal

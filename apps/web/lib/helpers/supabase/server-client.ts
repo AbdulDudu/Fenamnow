@@ -4,8 +4,8 @@ import { cookies } from "next/headers";
 
 export default function useSupabaseServer(cookieStore: ReturnType<typeof cookies>) {
   return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
     {
       cookies: {
         get(name: string) {
@@ -17,7 +17,7 @@ export default function useSupabaseServer(cookieStore: ReturnType<typeof cookies
 }
 
 export const createClient = (cookieStore: ReturnType<typeof cookies>) => {
-  return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+  return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string, {
     cookies: {
       get(name: string) {
         return cookieStore.get(name)?.value;

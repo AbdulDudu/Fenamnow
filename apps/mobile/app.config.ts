@@ -1,10 +1,11 @@
 import { ExpoConfig } from "@expo/config";
 
+const IS_DEV = process.env.APP_VARIANT === "development";
 export default (): ExpoConfig => ({
   name: "Fenamnow mobile",
   icon: "./assets/icon.png",
   slug: "fenamnow",
-  version: "1.2.1",
+  version: "1.2.2",
   scheme: "com.fenamnow",
   orientation: "portrait",
   userInterfaceStyle: "automatic",
@@ -27,14 +28,18 @@ export default (): ExpoConfig => ({
     usesAppleSignIn: true,
     bundleIdentifier: "com.fenamnow.ios",
     associatedDomains: ["applinks:fenamnow.com"],
-    googleServicesFile:
-      "./GoogleService-Info.plist" || process.env.GOOGLE_SERVICES_PLIST!,
+    googleServicesFile: IS_DEV
+      ? "./GoogleService-Info.plist"
+      : process.env.GOOGLE_SERVICES_PLIST!,
     config: {
       usesNonExemptEncryption: false,
       googleMapsApiKey: process.env.GOOGLE_MAPS_IOS_API_KEY!
     },
     entitlements: {
       "com.apple.developer.networking.wifi-info": true
+    },
+    infoPlist: {
+      UIBackgroundModes: ["location", "fetch", "remote-notification"]
     }
   },
   android: {
@@ -44,8 +49,9 @@ export default (): ExpoConfig => ({
       backgroundColor: "#0e96f8",
       foregroundImage: "./assets/adaptive-icon.png"
     },
-    googleServicesFile:
-      "./google-services.json" || process.env.GOOGLE_SERVICES_JSON!,
+    googleServicesFile: IS_DEV
+      ? "./google-services.json"
+      : process.env.GOOGLE_SERVICES_JSON!,
     config: {
       googleMaps: {
         apiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY!

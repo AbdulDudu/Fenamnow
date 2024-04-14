@@ -1,9 +1,21 @@
+import { useToken } from "@gluestack-style/react";
 import { useEffect, useState } from "react";
 import { ColorSchemeName, useColorScheme } from "react-native";
 import type { DeepPartial, Theme } from "stream-chat-expo";
-import { HEIGHT } from "../utils/constants";
 
-const getChatStyle = (colorScheme: ColorSchemeName): DeepPartial<Theme> => ({
+const getChatStyle = (
+  colorScheme: ColorSchemeName,
+  primaryColor = "#1fa2ff"
+): DeepPartial<Theme> => ({
+  messageSimple: {
+    content: {
+      containerInner: {
+        backgroundColor: primaryColor,
+        padding: 4,
+        borderColor: "transparent"
+      }
+    }
+  },
   colors:
     colorScheme === "dark"
       ? {
@@ -54,17 +66,15 @@ const getChatStyle = (colorScheme: ColorSchemeName): DeepPartial<Theme> => ({
           white_smoke: "#F2F2F2",
           white_snow: "#FCFCFC"
         }
-  // messageInput: {
-  //   container: {
-  //     paddingBottom: HEIGHT * 0.03,
-  //   },
-  // },
 });
 
 export const useChatTheme = () => {
   const colorScheme = useColorScheme();
+  const primaryColor = useToken("colors", "primary500");
 
-  const [chatStyle, setChatStyle] = useState(getChatStyle(colorScheme));
+  const [chatStyle, setChatStyle] = useState(
+    getChatStyle(colorScheme, primaryColor)
+  );
 
   useEffect(() => {
     setChatStyle(getChatStyle(colorScheme));

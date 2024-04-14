@@ -140,8 +140,8 @@ export default function SearchScreen() {
   }, []);
 
   return (
-    <div className="container w-full space-y-8">
-      <div className="flex h-screen w-full md:h-[90vh]">
+    <div className="w-full space-y-8 lg:container">
+      <div className="flex min-h-screen w-full md:h-[90vh]">
         <ResultsMap
           isLoaded={isLoaded}
           properties={properties?.data}

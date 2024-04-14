@@ -1,40 +1,11 @@
-import { MEDIA_TYPE } from "@/lib/utils/constants";
-import { pickMedia } from "@/lib/utils/files";
-import { MediaFileType } from "@fenamnow/types/files";
-import { OverlayProvider } from "@gluestack-ui/overlay";
 import {
-  Actionsheet,
-  ActionsheetBackdrop,
-  ActionsheetContent,
-  ActionsheetDragIndicator,
-  ActionsheetDragIndicatorWrapper,
-  ActionsheetIcon,
-  ActionsheetItem,
-  ActionsheetItemText,
-  ActionsheetSectionHeaderText,
-  ActionsheetSectionList,
-  ActionsheetVirtualizedList,
-  Box,
   Button,
   ButtonIcon,
-  FormControl,
-  FormControlErrorIcon,
-  FormControlErrorText,
-  FormControlHelper,
-  FormControlHelperText,
-  FormControlLabel,
-  FormControlLabelText,
   Icon,
-  Input,
-  InputField,
   Menu,
   MenuItem,
-  MenuItemLabel,
-  Text,
-  View,
-  VStack
+  MenuItemLabel
 } from "@gluestack-ui/themed";
-import * as FileSystem from "expo-file-system";
 import {
   BookImage,
   Camera,
@@ -42,13 +13,13 @@ import {
   MapPin,
   PlusCircle
 } from "lucide-react-native";
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
+import { Keyboard } from "react-native";
 import ImagePicker from "react-native-image-crop-picker";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useMessageInputContext } from "stream-chat-expo";
 import LocationInput from "./location-input";
 
-export default function CustomAttachButton() {
+export default function AttachmentButton() {
   const [showLocationSheet, setShowLocationSheet] = useState(false);
   const handleMapSheet = () => setShowLocationSheet(!showLocationSheet);
   const { pickFile, uploadNewImage } = useMessageInputContext();
@@ -58,7 +29,12 @@ export default function CustomAttachButton() {
       <Menu
         placement="top"
         selectionMode="single"
-        offset={32}
+        crossOffset={32}
+        onOpen={() => {
+          if (Keyboard.isVisible()) {
+            Keyboard.dismiss();
+          }
+        }}
         onSelectionChange={async (keys: any) => {
           switch (keys.currentKey) {
             case "photos-and-videos":
