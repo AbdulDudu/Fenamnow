@@ -1,4 +1,3 @@
-import { createChatToken, findChatChannel } from "@/lib/data/chat";
 import { getProfileById } from "@/lib/data/profile";
 import {
   addToFavorites,
@@ -8,7 +7,6 @@ import {
 } from "@/lib/data/property";
 import { getStreamChatClient } from "@/lib/helpers/getstream";
 import { getPublicUrl } from "@/lib/helpers/supabase";
-import { useRefreshOnFocus } from "@/lib/hooks/use-refresh-on-focus";
 import { useChatProviderContext } from "@/lib/providers/chat";
 import { useSession } from "@/lib/providers/session";
 import { HEIGHT, WIDTH } from "@/lib/utils/constants";
@@ -44,11 +42,10 @@ import {
 } from "@gluestack-ui/themed";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { ResizeMode, Video } from "expo-av";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { capitalize, property } from "lodash";
-import { useRef, useState } from "react";
+import { capitalize } from "lodash";
+import { useState } from "react";
 import { Alert, Modal, Platform, Share } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { createOpenLink } from "react-native-open-maps";
@@ -110,6 +107,9 @@ export default function PropertyDetailsScreen() {
       queryClient.invalidateQueries({
         queryKey: ["favourites", id]
       });
+      queryClient.invalidateQueries({
+        queryKey: ["favourites", session?.user.id]
+      });
       toast("Property saved", {
         duration: 2000,
         position: ToastPosition.BOTTOM,
@@ -154,16 +154,12 @@ export default function PropertyDetailsScreen() {
     }
   };
   const sort: any = [{ last_message_at: -1 }];
-  const {
-    data: chatData,
-    isPending: checkingForChat,
-    refetch
-  } = useQuery({
+  const { data: chatData, isPending: checkingForChat } = useQuery({
     queryKey: ["chat data", propertyOwner?.data?.id],
     staleTime: 300,
     queryFn: () =>
       getStreamChatClient.queryChannels(filter, sort, {
-        watch: true, // this is the default
+        watch: true,
         state: true
       }),
     enabled: !!session
@@ -226,7 +222,6 @@ export default function PropertyDetailsScreen() {
             });
           }
         }}
-        // name="property/[id]"
         options={{
           headerTitle: "Property Details"
         }}
@@ -587,7 +582,7 @@ export default function PropertyDetailsScreen() {
                         fontWeight="$medium"
                         as={SendIcon}
                       />
-                      <ButtonText fontSize="$sm">
+                      <ButtonText fontSize="$sm" minimumFontScale={0.5}>
                         {foundChannel && foundChannel?.length > 0
                           ? "Continue Chat"
                           : "Send a message"}

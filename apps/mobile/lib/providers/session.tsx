@@ -1,5 +1,5 @@
+import Storage from "@/lib/utils/storage";
 import { toast, ToastPosition } from "@backpackapp-io/react-native-toast";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   AuthError,
   AuthTokenResponse,
@@ -202,7 +202,7 @@ export const SessionProvider = ({
 
       .then(async () => {
         await supabase.auth.signOut();
-        await AsyncStorage.removeItem("chat_token");
+        Storage.removeItem("chat_token");
         QuickSqliteClient.resetDB();
         getStreamChatClient.disconnectUser();
       });

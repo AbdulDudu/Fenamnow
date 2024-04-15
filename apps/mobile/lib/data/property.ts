@@ -136,9 +136,9 @@ export const getProperties = async ({
       query = query.eq("user_id", session.user.id);
     } else {
       query = query
-        .neq("user_id", session.user.id)
         .range(start, end)
-        .eq("status", "available");
+        .eq("status", "available")
+        .order("user_id", { ascending: false });
     }
   }
   if (!session) {
@@ -159,13 +159,13 @@ export const getProperties = async ({
   negotiable && (query = query.eq("negotiable", negotiable!));
   furnished && (query = query.eq("furnished", furnished!));
 
-  city && city !== "All" && (query = query.eq("city", city!));
+  city && city !== "all" && (query = query.eq("city", city!));
   community &&
-    community !== "All" &&
+    community !== "all" &&
     (query = query.eq("community", community!));
 
-  // price_range &&
-  //   (query = query.gte("price", price_range![0]).lte("price", price_range![1]));
+  price_range &&
+    (query = query.gt("price", price_range![0]).lte("price", price_range![1]));
 
   bedrooms && bedrooms > 0 && (query = query.eq("bedrooms", bedrooms));
   bathrooms && bathrooms > 0 && (query = query.eq("bathrooms", bathrooms));

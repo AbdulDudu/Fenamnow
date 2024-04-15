@@ -28,7 +28,7 @@ export default function SearchScreen() {
 
   const [filters, setFilters] = useState({
     city: city?.toLowerCase(),
-    community: community !== "All" ? community?.toLowerCase() : "",
+    community: community?.toLowerCase(),
     listing_type,
     property_types:
       property_type && property_type !== "All"
