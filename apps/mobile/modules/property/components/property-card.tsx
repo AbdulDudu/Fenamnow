@@ -192,6 +192,7 @@ export default function PropertyCard({ property, isDashboard }: any) {
       >
         <View width="$full" justifyContent="space-between" height="$full">
           {/* Property photo */}
+          {/* @ts-ignore */}
           <Link asChild href={`/property/${property.id as string}`}>
             <Pressable height="55%">
               <View
@@ -233,6 +234,7 @@ export default function PropertyCard({ property, isDashboard }: any) {
 
           <VStack
             p="$2"
+            flex={1}
             borderBottomRightRadius="$lg"
             borderBottomLeftRadius="$lg"
             justifyContent="space-between"
@@ -328,7 +330,12 @@ export default function PropertyCard({ property, isDashboard }: any) {
                     });
                   }}
                 >
-                  {favouriteData?.data?.property_id !== property.id ? (
+                  {property.user_id == session?.user.id ? (
+                    <Badge>
+                      <BadgeText>Yours</BadgeText>
+                    </Badge>
+                  ) : property.user_id !== session?.user.id &&
+                    favouriteData?.data?.property_id !== property.id ? (
                     <AntDesign size={24} name="hearto" color="#0e96f8" />
                   ) : (
                     <AntDesign size={24} name="heart" color="#0e96f8" />

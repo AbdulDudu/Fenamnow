@@ -7,6 +7,7 @@ import { useChatTheme } from "@/lib/hooks/use-chat-theme";
 import { ChatProvider } from "@/lib/providers/chat";
 import QueryProvider from "@/lib/providers/query";
 import { SessionProvider } from "@/lib/providers/session";
+import Storage from "@/lib/utils/storage";
 import { ErrorBoundary } from "@/modules/common/error-boundary/error-boundary";
 import { Toasts } from "@backpackapp-io/react-native-toast";
 import {
@@ -22,7 +23,6 @@ import {
 import { COLORMODES } from "@gluestack-style/react/lib/typescript/types";
 import { GluestackUIProvider } from "@gluestack-ui/themed";
 import notifee, { EventType } from "@notifee/react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import analytics from "@react-native-firebase/analytics";
 import messaging from "@react-native-firebase/messaging";
 import {
@@ -49,7 +49,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   if (!messageId) {
     return;
   }
-  const chatToken = await AsyncStorage.getItem("chat_token");
+  const chatToken = Storage.getItem("chat_token");
 
   const { data, error } = await supabase.auth.getUser();
 

@@ -1,4 +1,5 @@
 import { getFavorites } from "@/lib/data/property";
+import { useRefreshOnFocus } from "@/lib/hooks/use-refresh-on-focus";
 import { useSession } from "@/lib/providers/session";
 import { HEIGHT } from "@/lib/utils/constants";
 import { Screen } from "@/modules/common/ui/screen";
@@ -16,9 +17,7 @@ function SavedScreen() {
 
   const {
     data: favouritesData,
-    // error,
     fetchNextPage,
-    // hasNextPage,
     isRefetching,
     refetch: refetchFavourites,
     isFetchingNextPage,
@@ -40,6 +39,8 @@ function SavedScreen() {
       setRefreshing(false);
     }, 2000);
   }, [isRefetching]);
+
+  useRefreshOnFocus(refetchFavourites);
 
   if (!session) {
     return <ScreenProtector />;

@@ -1,11 +1,13 @@
 import { ExpoConfig } from "@expo/config";
 
-const IS_DEV = process.env.APP_VARIANT === "development";
+const IS_DEV =
+  process.env.APP_VARIANT === "development" ||
+  process.env.APP_VARIANT === "beta";
+
 export default (): ExpoConfig => ({
   name: "Fenamnow mobile",
-  icon: "./assets/icon.png",
   slug: "fenamnow",
-  version: "1.2.2",
+  version: "1.2.3",
   scheme: "com.fenamnow",
   orientation: "portrait",
   userInterfaceStyle: "automatic",
@@ -24,37 +26,33 @@ export default (): ExpoConfig => ({
     policy: "appVersion"
   },
   ios: {
+    icon: "./assets/icon.png",
     supportsTablet: false,
     usesAppleSignIn: true,
     bundleIdentifier: "com.fenamnow.ios",
     associatedDomains: ["applinks:fenamnow.com"],
-    googleServicesFile: IS_DEV
-      ? "./GoogleService-Info.plist"
-      : process.env.GOOGLE_SERVICES_PLIST!,
+    googleServicesFile: "./GoogleService-Info.plist",
     config: {
       usesNonExemptEncryption: false,
-      googleMapsApiKey: process.env.GOOGLE_MAPS_IOS_API_KEY!
+      googleMapsApiKey: process.env.GOOGLE_IOS_API_KEY!
     },
     entitlements: {
       "com.apple.developer.networking.wifi-info": true
     },
     infoPlist: {
-      UIBackgroundModes: ["location", "fetch", "remote-notification"]
+      UIBackgroundModes: ["remote-notification"]
     }
   },
   android: {
-    icon: "./assets/icon.png",
     package: "com.fenamnow.android",
     adaptiveIcon: {
       backgroundColor: "#0e96f8",
       foregroundImage: "./assets/adaptive-icon.png"
     },
-    googleServicesFile: IS_DEV
-      ? "./google-services.json"
-      : process.env.GOOGLE_SERVICES_JSON!,
+    googleServicesFile: "./google-services.json",
     config: {
       googleMaps: {
-        apiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY!
+        apiKey: process.env.GOOGLE_ANDROID_API_KEY!
       }
     },
     permissions: [

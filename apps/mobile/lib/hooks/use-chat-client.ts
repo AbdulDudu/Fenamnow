@@ -1,10 +1,8 @@
-import { StreamChatGenerics } from "@fenamnow/types/chat";
+import Storage from "@/lib/utils/storage";
 import notifee from "@notifee/react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { StreamChat } from "stream-chat";
 import { createChatToken } from "../data/chat";
 import { getStreamChatClient } from "../helpers/getstream";
 import { supabase } from "../helpers/supabase";
@@ -22,8 +20,7 @@ const requestNotificationPermission = async () => {
 export const useChatClient = () => {
   const [isConnecting, setIsConnecting] = useState(true);
   const [isClientReady, setIsClientReady] = useState<boolean>(false);
-  const [chatClient, setChatClient] =
-    useState<StreamChat<StreamChatGenerics> | null>(null);
+
   const { session } = useSession();
   const [unreadCount, setUnreadCount] = useState<number>();
   const unsubscribePushListenersRef = useRef<() => void>();
@@ -49,12 +46,13 @@ export const useChatClient = () => {
 
       if (!data) return;
 
-      chatToken = await AsyncStorage.getItem("chat_token");
+      chatToken = Storage.getItem("chat_token");
       if (!chatToken) {
         const newToken = await createChatToken(data.user?.id!).then(data => {
+          console.log("chat token:", data?.token);
           return data?.token;
         });
-        await AsyncStorage.setItem("chat_token", newToken);
+        Storage.setItem("chat_token", newToken);
         chatToken = newToken;
       }
 
@@ -68,7 +66,7 @@ export const useChatClient = () => {
         .catch(e => {
           console.error(e);
           if (e) {
-            AsyncStorage.removeItem("chat_token");
+            Storage.removeItem("chat_token");
             return;
           }
         });

@@ -1,9 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import Storage from "@/lib/utils/storage";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { focusManager, QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { AppStateStatus, Platform } from "react-native";
-import { DevToolsBubble } from "react-native-react-query-devtools";
 import { useAppState } from "../hooks/use-app-state";
 import { useOnlineManager } from "../hooks/use-online-manager";
 
@@ -23,7 +22,7 @@ const queryClient = new QueryClient({
 });
 
 const asyncStoragePersister = createAsyncStoragePersister({
-  storage: AsyncStorage
+  storage: Storage
 });
 export default function QueryProvider({
   children

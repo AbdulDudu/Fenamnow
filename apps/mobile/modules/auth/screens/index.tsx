@@ -436,10 +436,10 @@ export default function AuthScreen() {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
               // user cancelled the login flow
             } else if (error.code === statusCodes.IN_PROGRESS) {
-              // operation (e.g. sign in) is in progress already
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
               // play services not available or outdated
             } else {
+              console.log(error);
               // some other error happened
               toast.error("Error signing in with google");
             }
