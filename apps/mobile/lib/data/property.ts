@@ -159,9 +159,10 @@ export const getProperties = async ({
   negotiable && (query = query.eq("negotiable", negotiable!));
   furnished && (query = query.eq("furnished", furnished!));
 
-  city && city !== "all" && (query = query.eq("city", city!));
+  city && city !== "all" && city !== "All" && (query = query.eq("city", city!));
   community &&
     community !== "all" &&
+    community !== "All" &&
     (query = query.eq("community", community!));
 
   price_range &&

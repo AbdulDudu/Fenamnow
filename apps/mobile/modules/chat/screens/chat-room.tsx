@@ -1,9 +1,8 @@
 import { getStreamChatClient } from "@/lib/helpers/getstream";
 import { useChatProviderContext } from "@/lib/providers/chat";
-import { pausePlayer, stopPlayer } from "@/lib/utils/audio-manager";
+import { stopPlayer } from "@/lib/utils/audio-manager";
 import { Screen } from "@/modules/common/ui/screen";
 import { AntDesign } from "@expo/vector-icons";
-import { useToken } from "@gluestack-style/react";
 import { OverlayProvider } from "@gluestack-ui/overlay";
 import {
   Button,
@@ -27,23 +26,14 @@ import {
 } from "@gluestack-ui/themed";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
 import { Ban, InfoIcon } from "lucide-react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Video as VideoCompressor } from "react-native-compressor";
 import {
   Channel,
   ChannelProps,
   MessageInput,
   MessageList,
-  MoreOptionsButton,
-  QuickSqliteClient,
-  Thread,
-  useChannelContext,
-  useChannelPreviewDisplayName,
-  useCreateMessagesContext,
-  useMessageActionHandlers,
-  useMessageActions,
-  useMessageContext,
-  useMessagesContext
+  useChannelPreviewDisplayName
 } from "stream-chat-expo";
 import MessageAttachment from "../components/message-attachment";
 import { CustomMessageInput } from "../components/message-input";

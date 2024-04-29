@@ -189,28 +189,28 @@ export default function AuthScreen() {
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        height="60%"
+        height="80%"
         width="100%"
-        display="flex"
-        justifyContent="space-between"
+        // display="flex"
+        justifyContent="center"
         alignItems="center"
       >
-        <Text fontSize="$3xl" lineHeight="$3xl" semibold>
-          {type == "register" && "Welcome to Fenamnow"}
-          {type == "login" && "Welcome back"}
-        </Text>
-        <Text>
-          {type == "register" && "Fill in the fields below to continue"}
-          {type == "login" && "Sign in with email and password"}
-        </Text>
-
         <VStack
           minHeight="$40"
-          display="flex"
-          space="sm"
+          space="lg"
           justifyContent="space-between"
           w="$full"
         >
+          <Center>
+            <Text fontSize="$3xl" lineHeight="$3xl" semibold>
+              {type == "register" && "Welcome to Fenamnow"}
+              {type == "login" && "Welcome back"}
+            </Text>
+            <Text>
+              {type == "register" && "Fill in the fields below to continue"}
+              {type == "login" && "Sign in with email and password"}
+            </Text>
+          </Center>
           {/* Full name input */}
           {type == "register" && (
             <Controller
@@ -386,162 +386,165 @@ export default function AuthScreen() {
           {loading && <ButtonSpinner mr="$2" />}
           <ButtonText>{capitalize(type)}</ButtonText>
         </Button>
-      </KeyboardAvoidingView>
-      <Link
-        style={{
-          textAlign: "center",
-          marginTop: 12,
-          color: "#0e96f8",
-          fontFamily: "NotoSans_600SemiBold",
-          fontWeight: "600"
-        }}
-        href="/(drawer)/(tabs)/home"
-      >
-        Continue as guest
-      </Link>
-      <Center
-        width="100%"
-        display="flex"
-        marginVertical="$5"
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Divider width="40%" />
-        <Text>or</Text>
-        <Divider width="40%" />
-      </Center>
+        <Link
+          style={{
+            textAlign: "center",
+            marginTop: 12,
+            color: "#0e96f8",
+            fontFamily: "NotoSans_600SemiBold",
+            fontWeight: "600"
+          }}
+          href="/(drawer)/(tabs)/home"
+        >
+          Continue as guest
+        </Link>
+        <Center
+          width="100%"
+          display="flex"
+          marginVertical="$5"
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Divider width="40%" />
+          <Text>or</Text>
+          <Divider width="40%" />
+        </Center>
 
-      <Button
-        width="100%"
-        my="$1"
-        backgroundColor="#DB4437"
-        onPress={async () => {
-          try {
-            await GoogleSignin.hasPlayServices();
-            const userInfo = await GoogleSignin.signIn();
-            if (userInfo.idToken) {
-              const { data, error } = await supabase.auth.signInWithIdToken({
-                provider: "google",
-                token: userInfo.idToken
-              });
-
-              if (error) {
-                throw error;
-              }
-            } else {
-              throw new Error("no ID token present!");
-            }
-          } catch (error: any) {
-            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-              // user cancelled the login flow
-            } else if (error.code === statusCodes.IN_PROGRESS) {
-            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-              // play services not available or outdated
-            } else {
-              console.log(error);
-              // some other error happened
-              toast.error("Error signing in with google");
-            }
-          }
-        }}
-      >
-        <ButtonIcon mr="$1.5" as={GoogleIcon} />
-        <ButtonText color="$white">
-          {type == "login" ? "Sign in" : "Sign up"} with Google
-        </ButtonText>
-      </Button>
-
-      {Platform.OS === "ios" && (
-        <AppleAuthentication.AppleAuthenticationButton
-          buttonType={
-            type == "login"
-              ? AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
-              : AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP
-          }
-          buttonStyle={
-            colorMode == "dark"
-              ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE
-              : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
-          }
-          cornerRadius={5}
-          style={{ maxWidth: "100%", height: 42, marginVertical: 4 }}
+        <Button
+          width="100%"
+          my="$1"
+          backgroundColor="#DB4437"
           onPress={async () => {
             try {
-              const credential = await AppleAuthentication.signInAsync({
-                requestedScopes: [
-                  AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-                  AppleAuthentication.AppleAuthenticationScope.EMAIL
-                ]
-              });
-              // Sign in via Supabase Auth.
-              if (credential.identityToken) {
-                const {
-                  error,
-                  data: { user }
-                } = await supabase.auth.signInWithIdToken({
-                  provider: "apple",
-                  token: credential.identityToken
+              await GoogleSignin.hasPlayServices();
+              const userInfo = await GoogleSignin.signIn();
+              if (userInfo.idToken) {
+                const { data, error } = await supabase.auth.signInWithIdToken({
+                  provider: "google",
+                  token: userInfo.idToken
                 });
 
-                console.log(user);
-                if (!error) {
-                  // User is signed in.
+                if (error) {
+                  throw error;
                 }
               } else {
-                throw new Error("No identityToken.");
+                throw new Error("no ID token present!");
               }
-            } catch (e: any) {
-              if (e.code === "ERR_REQUEST_CANCELED") {
-                toast("Sign in with apple cancelled", {
-                  position: ToastPosition.BOTTOM
-                });
+            } catch (error: any) {
+              if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                // user cancelled the login flow
+              } else if (error.code === statusCodes.IN_PROGRESS) {
+              } else if (
+                error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
+              ) {
+                // play services not available or outdated
               } else {
-                toast("Error signing in with apple", {
-                  position: ToastPosition.BOTTOM
-                });
+                console.log(error);
+                // some other error happened
+                toast.error("Error signing in with google");
               }
             }
           }}
-        />
-      )}
+        >
+          <ButtonIcon mr="$1.5" as={GoogleIcon} />
+          <ButtonText color="$white">
+            {type == "login" ? "Sign in" : "Sign up"} with Google
+          </ButtonText>
+        </Button>
 
-      <View
-        display="flex"
-        justifyContent="center"
-        flexDirection="row"
-        alignItems="center"
-        marginTop="$1"
-      >
-        {type == "login" && (
-          <>
-            <Text>Don't have an account? </Text>
-            <Button
-              variant="link"
-              onPress={() => {
-                setType("register");
-                clearErrors();
-              }}
-            >
-              <ButtonText>Register</ButtonText>
-            </Button>
-          </>
+        {Platform.OS === "ios" && (
+          <AppleAuthentication.AppleAuthenticationButton
+            buttonType={
+              type == "login"
+                ? AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+                : AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP
+            }
+            buttonStyle={
+              colorMode == "dark"
+                ? AppleAuthentication.AppleAuthenticationButtonStyle
+                    .WHITE_OUTLINE
+                : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+            }
+            cornerRadius={5}
+            style={{ maxWidth: "100%", height: 42, marginVertical: 4 }}
+            onPress={async () => {
+              try {
+                const credential = await AppleAuthentication.signInAsync({
+                  requestedScopes: [
+                    AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                    AppleAuthentication.AppleAuthenticationScope.EMAIL
+                  ]
+                });
+                // Sign in via Supabase Auth.
+                if (credential.identityToken) {
+                  const {
+                    error,
+                    data: { user }
+                  } = await supabase.auth.signInWithIdToken({
+                    provider: "apple",
+                    token: credential.identityToken
+                  });
+
+                  console.log(user);
+                  if (!error) {
+                    // User is signed in.
+                  }
+                } else {
+                  throw new Error("No identityToken.");
+                }
+              } catch (e: any) {
+                if (e.code === "ERR_REQUEST_CANCELED") {
+                  toast("Sign in with apple cancelled", {
+                    position: ToastPosition.BOTTOM
+                  });
+                } else {
+                  toast("Error signing in with apple", {
+                    position: ToastPosition.BOTTOM
+                  });
+                }
+              }
+            }}
+          />
         )}
-        {type == "register" && (
-          <>
-            <Text>Already have an account? </Text>
-            <Button
-              variant="link"
-              onPress={() => {
-                setType("login");
-                clearErrors();
-              }}
-            >
-              <ButtonText>Login</ButtonText>
-            </Button>
-          </>
-        )}
-      </View>
+        <View
+          display="flex"
+          justifyContent="center"
+          flexDirection="row"
+          alignItems="center"
+          marginTop="$1"
+        >
+          {type == "login" && (
+            <>
+              <Text>Don't have an account? </Text>
+              <Button
+                variant="link"
+                onPress={() => {
+                  setType("register");
+                  clearErrors();
+                }}
+              >
+                <ButtonText>Register</ButtonText>
+              </Button>
+            </>
+          )}
+          {type == "register" && (
+            <>
+              <Text>Already have an account? </Text>
+              <Button
+                variant="link"
+                onPress={() => {
+                  setType("login");
+                  clearErrors();
+                }}
+              >
+                <ButtonText>Login</ButtonText>
+              </Button>
+            </>
+          )}
+        </View>
+      </KeyboardAvoidingView>
+
       <ForgotPasswordModal
         showForgotPasswordModal={showForgotPasswordModal}
         setShowForgotPasswordModal={setShowForgotPasswordModal}

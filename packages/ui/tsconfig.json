@@ -1,11 +1,13 @@
 {
   "extends": "@fenamnow/typescript-config/react-library.json",
   "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "ES2022"],
+    "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
       "@ui/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["*.ts","src"],
   "exclude": ["node_modules"]
 }

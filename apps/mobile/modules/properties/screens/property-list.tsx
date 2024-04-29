@@ -5,7 +5,6 @@ import { Screen } from "@/modules/common/ui/screen";
 import {
   AddIcon,
   Button,
-  ButtonIcon,
   ButtonText,
   Center,
   Fab,
@@ -19,8 +18,8 @@ import {
 import { FlashList } from "@shopify/flash-list";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { useCallback, useRef, useState } from "react";
-import { RefreshControl, useColorScheme } from "react-native";
+import { useCallback, useState } from "react";
+import { RefreshControl } from "react-native";
 import PropertyCard from "../../property/components/property-card";
 
 export default function PropertiesListScreen() {
@@ -32,7 +31,7 @@ export default function PropertiesListScreen() {
 
   const {
     data: properties,
-    error,
+    isError,
     fetchNextPage,
     hasNextPage,
     isRefetching,
@@ -65,6 +64,19 @@ export default function PropertiesListScreen() {
           Loading properties
         </Text>
         <Spinner size="large" />
+      </Screen>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Screen justifyContent="center" gap="$4" alignItems="center">
+        <Text textAlign="center" fontSize="$lg" semibold>
+          Encountered an error while retrieving properties
+        </Text>
+        <Button onPress={() => refetchProperties()}>
+          <ButtonText>Try again</ButtonText>
+        </Button>
       </Screen>
     );
   }

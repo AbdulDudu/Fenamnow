@@ -65,9 +65,7 @@ export default function AddressForm({
   control,
   watch,
   setValue,
-  errors,
-  latitude,
-  longitude
+  errors
 }: {
   control: Control<z.infer<typeof propertyInsertFormSchema>> & any;
   watch: UseFormWatch<z.infer<typeof propertyInsertFormSchema>>;
@@ -188,7 +186,7 @@ export default function AddressForm({
             <FormControlError>
               <FormControlErrorIcon as={AlertCircleIcon} />
               <FormControlErrorText>
-                {errors.address?.message}
+                {errors?.address?.message as string}
               </FormControlErrorText>
             </FormControlError>
           </FormControl>

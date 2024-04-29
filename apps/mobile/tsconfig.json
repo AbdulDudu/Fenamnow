@@ -1,9 +1,6 @@
 {
   "extends": ["expo/tsconfig.base", "@fenamnow/typescript-config/base.json"],
   "compilerOptions": {
-    "emitDecoratorMetadata": true,
-    "exactOptionalPropertyTypes": true,
-    "experimentalDecorators": true,
     "strict": true,
     "paths": {
       "@/*": ["./*"]

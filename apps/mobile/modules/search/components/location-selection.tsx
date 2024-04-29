@@ -84,7 +84,7 @@ export default function LocationSelection({
       <VStack width="47%" space="sm">
         <Text>Community</Text>
         <Select
-          isDisabled={!city || city == ""}
+          isDisabled={!city || city == "" || city == "all" || city == "All"}
           width="$full"
           defaultValue={community}
           onValueChange={setCommunity}

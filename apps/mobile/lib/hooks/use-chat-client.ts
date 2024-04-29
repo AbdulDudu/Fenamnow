@@ -1,7 +1,7 @@
 import Storage from "@/lib/utils/storage";
 import notifee from "@notifee/react-native";
 import messaging from "@react-native-firebase/messaging";
-import { useQuery } from "@tanstack/react-query";
+import { Session } from "@supabase/supabase-js";
 import { useEffect, useRef, useState } from "react";
 import { createChatToken } from "../data/chat";
 import { getStreamChatClient } from "../helpers/getstream";
@@ -20,16 +20,9 @@ const requestNotificationPermission = async () => {
 export const useChatClient = () => {
   const [isConnecting, setIsConnecting] = useState(true);
   const [isClientReady, setIsClientReady] = useState<boolean>(false);
-
   const { session } = useSession();
   const [unreadCount, setUnreadCount] = useState<number>();
   const unsubscribePushListenersRef = useRef<() => void>();
-
-  const { data } = useQuery({
-    queryKey: ["user", session],
-    queryFn: async () => (await supabase.auth.getUser()).data,
-    enabled: !!session
-  });
 
   useEffect(() => {
     const run = async () => {
@@ -40,41 +33,41 @@ export const useChatClient = () => {
   }, []);
 
   useEffect(() => {
-    let chatToken;
     const initChat = async () => {
       unsubscribePushListenersRef.current?.();
-
-      if (!data) return;
-
-      chatToken = Storage.getItem("chat_token");
-      if (!chatToken) {
-        const newToken = await createChatToken(data.user?.id!).then(data => {
-          console.log("chat token:", data?.token);
-          return data?.token;
-        });
+      // if (!session) return;
+      let chatToken = Storage.getItem("chat_token");
+      if (!chatToken && session?.user.id) {
+        const newToken = await createChatToken(session?.user?.id!).then(
+          data => {
+            console.log(data);
+            return data?.token;
+          }
+        );
         Storage.setItem("chat_token", newToken);
+
         chatToken = newToken;
       }
 
+      // if (session && chatToken) {
       const connectedUser = await getStreamChatClient
         .connectUser(
           {
-            id: data.user?.id!
+            id: session?.user?.id || ""
           },
           chatToken
         )
         .catch(e => {
-          console.error(e);
           if (e) {
             Storage.removeItem("chat_token");
             return;
           }
         });
-
       setIsClientReady(true);
 
       const initialUnreadCount = connectedUser?.me?.total_unread_count;
       setUnreadCount(initialUnreadCount);
+      // }
       setIsConnecting(false);
       const permissionAuthStatus = await messaging().hasPermission();
       const isEnabled =
@@ -85,7 +78,7 @@ export const useChatClient = () => {
         // Register FCM token with stream chat server.
         const token = await messaging().getToken();
         await getStreamChatClient
-          .addDevice(token, "firebase", data.user?.id, "android")
+          .addDevice(token, "firebase", session?.user?.id ?? "", "android")
           .catch(e => {
             console.error(e);
           });
@@ -98,7 +91,7 @@ export const useChatClient = () => {
         const unsubscribeTokenRefresh = messaging().onTokenRefresh(
           async newToken => {
             await getStreamChatClient
-              .addDevice(token, "firebase", data.user?.id, "android")
+              .addDevice(token, "firebase", session?.user?.id ?? "", "android")
               .catch(e => {
                 console.error(e);
               });
@@ -150,12 +143,12 @@ export const useChatClient = () => {
       setIsConnecting(false);
     };
     setIsConnecting(true);
-    data?.user && initChat();
+    session !== null && initChat();
 
     return () => {
       getStreamChatClient && getStreamChatClient.disconnectUser();
     };
-  }, [data]);
+  }, [session]);
 
   useEffect(() => {
     const listener = getStreamChatClient?.on(e => {

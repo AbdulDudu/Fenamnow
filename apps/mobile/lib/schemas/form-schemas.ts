@@ -21,13 +21,18 @@ export const propertyInsertFormSchema = z.object({
     .min(2)
     .max(500),
   price: z.number().min(100).max(1000000),
-  bedrooms: z.number().min(0).max(100, {
-    message: "Bedrooms must be between 0 and 100."
-  }),
+  bedrooms: z
+    .number()
+    .min(0)
+    .max(100, {
+      message: "Bedrooms must be between 0 and 100."
+    })
+    .nullish(),
   bathrooms: z
     .number()
     .min(0)
-    .max(100, { message: "Bathrooms must be between 0 and 100." }),
+    .max(100, { message: "Bathrooms must be between 0 and 100." })
+    .nullish(),
   date_available: z.string(),
   amenities: z
     .array(z.any())

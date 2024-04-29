@@ -9,7 +9,6 @@ import {
 import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import { useRouter } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
 import React, { createContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { QuickSqliteClient } from "stream-chat-expo";
@@ -51,7 +50,6 @@ type SessionContextProps = {
   getOAuthUrl: ({ provider }: { provider: Provider }) => Promise<{
     url: string | null;
   }>;
-  signInWithGoogle: () => Promise<void>;
   deleteAccount: () => Promise<void>;
 };
 
@@ -172,40 +170,28 @@ export const SessionProvider = ({
       });
     }
   };
-  const signInWithGoogle = async () => {
-    try {
-      const { url } = await getOAuthUrl({ provider: "google" });
-      if (!url) return;
-
-      const result = await WebBrowser.openAuthSessionAsync(url, redirectTo);
-      if (result.type === "success") {
-        const data = extractParamsFromUrl(result.url);
-
-        if (!data.access_token || !data.refresh_token) return;
-        setOAuthSession({
-          access_token: data.access_token,
-          refresh_token: data.refresh_token
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const logout = async () => {
-    await supabase
-      .from("profiles")
-      .update({ fcm_token: "" })
-      .eq("id", {
-        id: session?.user.id
-      })
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ fcm_token: "" })
+        .eq("id", {
+          id: session?.user.id
+        });
+      if (error) {
+        throw error;
+      }
 
-      .then(async () => {
-        await supabase.auth.signOut();
-        Storage.removeItem("chat_token");
-        QuickSqliteClient.resetDB();
-        getStreamChatClient.disconnectUser();
-      });
+      const { error: logoutError } = await supabase.auth.signOut();
+      if (logoutError) throw logoutError;
+
+      Storage.removeItem("chat_token");
+      QuickSqliteClient.resetDB();
+      getStreamChatClient.disconnectUser();
+    } catch (error) {
+      toast.error("Error logging out user");
+    }
   };
 
   const resetPassword = async (new_password: string) => {
@@ -260,7 +246,6 @@ export const SessionProvider = ({
         showScreens,
         extractParamsFromUrl,
         getOAuthUrl,
-        signInWithGoogle,
         login,
         createSessionFromUrl,
         register,

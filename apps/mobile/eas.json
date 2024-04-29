@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 5.6.0",
+    "version": ">= 7.8.2",
     "appVersionSource": "remote"
   },
   "build": {
@@ -10,30 +10,48 @@
       "ios": {
         "buildConfiguration": "Debug",
         "simulator": true
-      },
-      "env": {
-        "APP_VARIANT": "development"
-      },
-      "channel": "simulator"
+      }
     },
     "preview": {
       "distribution": "internal",
       "ios": {
-        "cocoapods": "1.15.2",
         "simulator": true
       },
       "android": {
         "buildType": "apk"
       },
       "env": {
-        "APP_VARIANT": "beta"
-      },
-      "channel": "preview"
+        "EXPO_PUBLIC_GOOGLE_IOS_API_KEY": "AIzaSyBVgQ6AptD-WqzA0WsFomGdDe5vqxizDUY",
+        "EXPO_PUBLIC_GOOGLE_AUTH_IOS_URL_SCHEME": "com.googleusercontent.apps.90552360022-mhgk9bka1bio6ndra6u75e3278vm909j",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_API_KEY": "AIzaSyAr11qoLqevTv_nzzp8fV3VAtW5vQlyzDg",
+        "EXPO_PUBLIC_GOOGLE_AUTH_IOS_CLIENT_ID": "90552360022-mhgk9bka1bio6ndra6u75e3278vm909j.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_GEOCODING_API_KEY": "AIzaSyBPZjo3JkYAXTyRXuhwT1B2aCGCFxsgC0I",
+        "EXPO_PUBLIC_GOOGLE_AUTH_WEB_CLIENT_ID": "90552360022-brhcrjbv58dhdv211ldslrvdvqsimccn.apps.googleusercontent.com",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://olyqwduovxprfhgeastn.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9seXF3ZHVvdnhwcmZoZ2Vhc3RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTE1OTA0NjAsImV4cCI6MjAwNzE2NjQ2MH0.41iJsE9LN84QpV-NICbkIxZ8x2P40Ma_6CqQ7IX6UtY",
+        "EXPO_PUBLIC_WEB_APP_URL": "https://fenamnow.com",
+        "EXPO_PUBLIC_GETSTREAM_API_KEY": "k4cacw5uk6ds",
+        "EXPO_USE_METRO_WORKSPACE_ROOT": "1",
+        "STYLE_FONT_RESOLVER_STRATEGY": "expo"
+      }
     },
     "production": {
       "distribution": "store",
       "autoIncrement": true,
-      "channel": "production"
+      "env": {
+        "EXPO_PUBLIC_GOOGLE_IOS_API_KEY": "AIzaSyBVgQ6AptD-WqzA0WsFomGdDe5vqxizDUY",
+        "EXPO_PUBLIC_GOOGLE_AUTH_IOS_URL_SCHEME": "com.googleusercontent.apps.90552360022-mhgk9bka1bio6ndra6u75e3278vm909j",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_API_KEY": "AIzaSyAr11qoLqevTv_nzzp8fV3VAtW5vQlyzDg",
+        "EXPO_PUBLIC_GOOGLE_AUTH_IOS_CLIENT_ID": "90552360022-mhgk9bka1bio6ndra6u75e3278vm909j.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_GEOCODING_API_KEY": "AIzaSyBPZjo3JkYAXTyRXuhwT1B2aCGCFxsgC0I",
+        "EXPO_PUBLIC_GOOGLE_AUTH_WEB_CLIENT_ID": "90552360022-brhcrjbv58dhdv211ldslrvdvqsimccn.apps.googleusercontent.com",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://olyqwduovxprfhgeastn.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9seXF3ZHVvdnhwcmZoZ2Vhc3RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTE1OTA0NjAsImV4cCI6MjAwNzE2NjQ2MH0.41iJsE9LN84QpV-NICbkIxZ8x2P40Ma_6CqQ7IX6UtY",
+        "EXPO_PUBLIC_WEB_APP_URL": "https://fenamnow.com",
+        "EXPO_PUBLIC_GETSTREAM_API_KEY": "k4cacw5uk6ds",
+        "EXPO_USE_METRO_WORKSPACE_ROOT": "1",
+        "STYLE_FONT_RESOLVER_STRATEGY": "expo"
+      }
     }
   },
   "submit": {}

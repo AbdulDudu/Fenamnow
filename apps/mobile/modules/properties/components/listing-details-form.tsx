@@ -2,16 +2,14 @@ import {
   getAmenities,
   getPropertyLeaseDurations,
   getPropertyListingTypes,
-  getPropertyTypes,
-  upsertProperty
+  getPropertyTypes
 } from "@/lib/data/property";
 import { getPublicUrl, supabase } from "@/lib/helpers/supabase";
 import { useSession } from "@/lib/providers/session";
 import { propertyInsertFormSchema } from "@/lib/schemas/form-schemas";
 import { CAMERA_TYPE, HEIGHT, MEDIA_TYPE } from "@/lib/utils/constants";
-import { pickMedia, takeMedia, upload } from "@/lib/utils/files";
+import { pickMedia, takeMedia } from "@/lib/utils/files";
 import { toast, ToastPosition } from "@backpackapp-io/react-native-toast";
-import { Database } from "@fenamnow/types/database";
 import {
   AlertCircleIcon,
   Box,
@@ -94,7 +92,6 @@ import {
   Controller,
   FieldErrors,
   UseFormHandleSubmit,
-  UseFormSetValue,
   UseFormWatch
 } from "react-hook-form";
 import DateTimePicker, { DateType } from "react-native-ui-datepicker";
@@ -103,26 +100,20 @@ import * as z from "zod";
 export default function ListingDetailsForm({
   control,
   watch,
-  // setValue,
   errors,
   handleSubmit
 }: {
-  control: Control<z.infer<typeof propertyInsertFormSchema>> & any;
+  control: Control<z.infer<typeof propertyInsertFormSchema>>;
   watch: UseFormWatch<z.infer<typeof propertyInsertFormSchema>>;
-  setValue: UseFormSetValue<z.infer<typeof propertyInsertFormSchema>>;
   errors: FieldErrors<z.infer<typeof propertyInsertFormSchema>>;
-  handleSubmit: UseFormHandleSubmit<z.infer<typeof propertyInsertFormSchema>> &
-    any;
+  handleSubmit: UseFormHandleSubmit<z.infer<typeof propertyInsertFormSchema>>;
 }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const { session } = useSession();
   const videoRef = useRef<Video>(null);
   const finalFocusRef = useRef(null);
-  const [videoStatus, setVideoStatus] = useState<any>({});
   const [date, setDate] = useState<DateType>(dayjs());
-  const [year, setYear] = useState<DateType>(dayjs().year());
   const colorMode = useColorMode();
-  const [loading, setLoading] = useState(false);
   const [savingProperty, setSavingProperty] = useState(false);
   const { id } = useGlobalSearchParams();
   const router = useRouter();
@@ -264,7 +255,7 @@ export default function ListingDetailsForm({
         .from("properties")
         .upsert({
           id: id ? parseInt(id as unknown as string) : undefined,
-          user_id: session?.user.id,
+          user_id: session?.user?.id as string,
           address: data.address as string,
           city: data.city,
           community: data.community,
@@ -277,8 +268,8 @@ export default function ListingDetailsForm({
           lease_duration: data.lease_duration,
           price: data.price,
           property_type: data.property_type,
-          bathrooms: data.bathrooms,
-          bedrooms: data.bedrooms,
+          bathrooms: data.bathrooms || 0,
+          bedrooms: data.bedrooms || 0,
           property_size: data.property_size,
           images,
           video_tour: video_tour,
@@ -615,79 +606,86 @@ export default function ListingDetailsForm({
         />
       </HStack>
 
-      <HStack alignItems="center" width="$full" justifyContent="space-between">
-        {/* Bedrooms */}
-        <Controller
-          control={control}
-          name="bedrooms"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <FormControl
-              isRequired
-              isInvalid={errors.bedrooms?.message !== undefined}
-              width="48%"
-            >
-              <FormControlLabel>
-                <FormControlLabelText>Bedrooms</FormControlLabelText>
-              </FormControlLabel>
-              <Input>
-                <InputField
-                  type="text"
-                  value={numberFormatter(value || 0)}
-                  onChangeText={text =>
-                    onChange(parseInt(text.replace(/,/g, "")))
-                  }
-                  onBlur={onBlur}
-                  keyboardType="number-pad"
-                  placeholder="0"
-                />
-              </Input>
+      {watch("property_type") == "land" ||
+      watch("property_type") == "warehouse" ? null : (
+        <HStack
+          alignItems="center"
+          width="$full"
+          justifyContent="space-between"
+        >
+          {/* Bedrooms */}
+          <Controller
+            control={control}
+            name="bedrooms"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <FormControl
+                isRequired
+                isInvalid={errors.bedrooms?.message !== undefined}
+                width="48%"
+              >
+                <FormControlLabel>
+                  <FormControlLabelText>Bedrooms</FormControlLabelText>
+                </FormControlLabel>
+                <Input>
+                  <InputField
+                    type="text"
+                    value={numberFormatter(value || 0)}
+                    onChangeText={text =>
+                      onChange(parseInt(text.replace(/,/g, "")))
+                    }
+                    onBlur={onBlur}
+                    keyboardType="number-pad"
+                    placeholder="0"
+                  />
+                </Input>
 
-              <FormControlError>
-                <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>
-                  {errors.bedrooms?.message}
-                </FormControlErrorText>
-              </FormControlError>
-            </FormControl>
-          )}
-        />
+                <FormControlError>
+                  <FormControlErrorIcon as={AlertCircleIcon} />
+                  <FormControlErrorText>
+                    {errors.bedrooms?.message}
+                  </FormControlErrorText>
+                </FormControlError>
+              </FormControl>
+            )}
+          />
 
-        {/* Bathrooms */}
-        <Controller
-          control={control}
-          name="bathrooms"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <FormControl
-              isRequired
-              isInvalid={errors.bathrooms?.message !== undefined}
-              width="48%"
-            >
-              <FormControlLabel>
-                <FormControlLabelText>Bathrooms</FormControlLabelText>
-              </FormControlLabel>
-              <Input>
-                <InputField
-                  type="text"
-                  value={numberFormatter(value || 0)}
-                  onChangeText={text =>
-                    onChange(Number(text.replace(/,/g, "")))
-                  }
-                  onBlur={onBlur}
-                  keyboardType="number-pad"
-                  placeholder="0"
-                />
-              </Input>
+          {/* Bathrooms */}
+          <Controller
+            control={control}
+            name="bathrooms"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <FormControl
+                isRequired
+                isInvalid={errors.bathrooms?.message !== undefined}
+                width="48%"
+              >
+                <FormControlLabel>
+                  <FormControlLabelText>Bathrooms</FormControlLabelText>
+                </FormControlLabel>
+                <Input>
+                  <InputField
+                    type="text"
+                    value={numberFormatter(value || 0)}
+                    onChangeText={text =>
+                      onChange(Number(text.replace(/,/g, "")))
+                    }
+                    onBlur={onBlur}
+                    keyboardType="number-pad"
+                    placeholder="0"
+                  />
+                </Input>
 
-              <FormControlError>
-                <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>
-                  {errors.bathrooms?.message}
-                </FormControlErrorText>
-              </FormControlError>
-            </FormControl>
-          )}
-        />
-      </HStack>
+                <FormControlError>
+                  <FormControlErrorIcon as={AlertCircleIcon} />
+                  <FormControlErrorText>
+                    {errors.bathrooms?.message}
+                  </FormControlErrorText>
+                </FormControlError>
+              </FormControl>
+            )}
+          />
+        </HStack>
+      )}
 
       <HStack alignItems="center" width="$full" justifyContent="space-between">
         {/* Price */}
@@ -961,8 +959,8 @@ export default function ListingDetailsForm({
 
               <Select
                 onValueChange={onChange}
-                defaultValue={value ?? undefined}
-                selectedValue={value ?? undefined}
+                defaultValue={value || ""}
+                selectedValue={value || ""}
               >
                 <SelectTrigger variant="outline" size="md" onBlur={onBlur}>
                   <SelectInput placeholder="Select One" />

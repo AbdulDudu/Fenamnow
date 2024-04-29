@@ -1,13 +1,11 @@
 import "intl-pluralrules";
 import { config } from "@/config/gluestack-ui.config";
 import { getStreamChatClient } from "@/lib/helpers/getstream";
-import { supabase } from "@/lib/helpers/supabase";
 import { useChatClient } from "@/lib/hooks/use-chat-client";
 import { useChatTheme } from "@/lib/hooks/use-chat-theme";
 import { ChatProvider } from "@/lib/providers/chat";
 import QueryProvider from "@/lib/providers/query";
-import { SessionProvider } from "@/lib/providers/session";
-import Storage from "@/lib/utils/storage";
+import { SessionProvider, useSession } from "@/lib/providers/session";
 import { ErrorBoundary } from "@/modules/common/error-boundary/error-boundary";
 import { Toasts } from "@backpackapp-io/react-native-toast";
 import {
@@ -43,54 +41,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Chat, OverlayProvider } from "stream-chat-expo";
 
 SplashScreen.preventAutoHideAsync();
-
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-  const messageId = remoteMessage.data?.id as string;
-  if (!messageId) {
-    return;
-  }
-  const chatToken = Storage.getItem("chat_token");
-
-  const { data, error } = await supabase.auth.getUser();
-
-  if (error) {
-    return;
-  }
-
-  const user = {
-    id: data.user.id,
-    image: data.user.user_metadata.avatar_url,
-    name: data.user.user_metadata.full_name
-  };
-
-  await getStreamChatClient._setToken(user, chatToken);
-  const message = await getStreamChatClient.getMessage(messageId);
-
-  // create the android channel to send the notification to
-  const channelId = await notifee.createChannel({
-    id: "chat-messages",
-    name: "Chat Messages"
-  });
-
-  if (message.message.user?.name && message.message.text) {
-    const { stream, ...rest } = remoteMessage.data ?? {};
-    const data = {
-      ...rest,
-      ...((stream as unknown as Record<string, string> | undefined) ?? {}) // extract and merge stream object if present
-    };
-    await notifee.displayNotification({
-      android: {
-        channelId,
-        pressAction: {
-          id: "default"
-        }
-      },
-      body: message.message.text,
-      data,
-      title: "New message from " + message.message.user.name
-    });
-  }
-});
 
 export const unstable_settings = {
   initialRouteName: "index"

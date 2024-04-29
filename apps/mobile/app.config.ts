@@ -1,26 +1,19 @@
 import { ExpoConfig } from "@expo/config";
 
-const IS_DEV =
-  process.env.APP_VARIANT === "development" ||
-  process.env.APP_VARIANT === "beta";
-
 export default (): ExpoConfig => ({
   name: "Fenamnow mobile",
   slug: "fenamnow",
-  version: "1.2.3",
+  version: "1.2.6",
   scheme: "com.fenamnow",
   orientation: "portrait",
   userInterfaceStyle: "automatic",
   assetBundlePatterns: ["**/*"],
+  backgroundColor: "#0e96f8",
   owner: "fliezer",
   splash: {
     image: "./assets/splash.png",
     resizeMode: "contain",
     backgroundColor: "#0e96f8"
-  },
-  updates: {
-    fallbackToCacheTimeout: 0,
-    url: "https://u.expo.dev/331a3ae4-0005-4941-a145-e5e2784eff9e"
   },
   runtimeVersion: {
     policy: "appVersion"
@@ -31,10 +24,11 @@ export default (): ExpoConfig => ({
     usesAppleSignIn: true,
     bundleIdentifier: "com.fenamnow.ios",
     associatedDomains: ["applinks:fenamnow.com"],
-    googleServicesFile: "./GoogleService-Info.plist",
+    googleServicesFile:
+      process.env.GOOGLE_SERVICE_INFO_PLIST || "./GoogleService-Info.plist",
     config: {
       usesNonExemptEncryption: false,
-      googleMapsApiKey: process.env.GOOGLE_IOS_API_KEY!
+      googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_IOS_API_KEY!
     },
     entitlements: {
       "com.apple.developer.networking.wifi-info": true
@@ -49,10 +43,11 @@ export default (): ExpoConfig => ({
       backgroundColor: "#0e96f8",
       foregroundImage: "./assets/adaptive-icon.png"
     },
-    googleServicesFile: "./google-services.json",
+    googleServicesFile:
+      process.env.GOOGLE_SERVICES_JSON || "./google-services.json",
     config: {
       googleMaps: {
-        apiKey: process.env.GOOGLE_ANDROID_API_KEY!
+        apiKey: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_API_KEY!
       }
     },
     permissions: [
@@ -60,6 +55,7 @@ export default (): ExpoConfig => ({
       "android.permission.WRITE_EXTERNAL_STORAGE",
       "android.permission.READ_EXTERNAL_STORAGE"
     ],
+    softwareKeyboardLayoutMode: "resize",
     intentFilters: [
       {
         action: "VIEW",
@@ -119,12 +115,6 @@ export default (): ExpoConfig => ({
           "../../node_modules/@expo-google-fonts/noto-sans/NotoSans_700Bold.ttf",
           "../../node_modules/@expo-google-fonts/noto-sans/NotoSans_800ExtraBold.ttf"
         ]
-      }
-    ],
-    [
-      "expo-updates",
-      {
-        username: "fliezer"
       }
     ],
     [
