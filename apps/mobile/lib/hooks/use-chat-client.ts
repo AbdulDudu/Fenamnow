@@ -40,7 +40,6 @@ export const useChatClient = () => {
       if (!chatToken && session?.user.id) {
         const newToken = await createChatToken(session?.user?.id!).then(
           data => {
-            console.log(data);
             return data?.token;
           }
         );
@@ -49,7 +48,6 @@ export const useChatClient = () => {
         chatToken = newToken;
       }
 
-      // if (session && chatToken) {
       const connectedUser = await getStreamChatClient
         .connectUser(
           {

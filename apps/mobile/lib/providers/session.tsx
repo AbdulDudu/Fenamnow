@@ -173,23 +173,16 @@ export const SessionProvider = ({
 
   const logout = async () => {
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ fcm_token: "" })
-        .eq("id", {
-          id: session?.user.id
-        });
-      if (error) {
-        throw error;
-      }
-
       const { error: logoutError } = await supabase.auth.signOut();
-      if (logoutError) throw logoutError;
+      if (logoutError) {
+        throw logoutError;
+      }
 
       Storage.removeItem("chat_token");
       QuickSqliteClient.resetDB();
       getStreamChatClient.disconnectUser();
     } catch (error) {
+      console.log(error);
       toast.error("Error logging out user");
     }
   };

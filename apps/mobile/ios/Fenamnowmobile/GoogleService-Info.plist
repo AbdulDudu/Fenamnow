@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>90552360022-mhgk9bka1bio6ndra6u75e3278vm909j.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.90552360022-mhgk9bka1bio6ndra6u75e3278vm909j</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>90552360022-1t46tviplu7m7fmrrtvfcmg7vc3h316r.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBVgQ6AptD-WqzA0WsFomGdDe5vqxizDUY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>90552360022</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.fenamnow.ios</string>
+	<key>PROJECT_ID</key>
+	<string>fenamnow</string>
+	<key>STORAGE_BUCKET</key>
+	<string>fenamnow.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:90552360022:ios:1e01bd1749d01787fe2ff7</string>
+</dict>
+</plist>
