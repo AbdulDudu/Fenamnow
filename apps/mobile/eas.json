@@ -50,6 +50,7 @@
         "EXPO_PUBLIC_WEB_APP_URL": "https://fenamnow.com",
         "EXPO_PUBLIC_GETSTREAM_API_KEY": "k4cacw5uk6ds",
         "EXPO_USE_METRO_WORKSPACE_ROOT": "1",
+        "NODE_ENV": "production",
         "STYLE_FONT_RESOLVER_STRATEGY": "expo"
       }
     }
