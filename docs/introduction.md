@@ -45,3 +45,5 @@ Brief descriptions of each of the technologies and tools used to build the proje
 - [Supabase](https://supabase.com): Supabase is a database management system that allows you to store and query data in any database.
 
 - [Sanity](https://www.sanity.io): Sanity is a content management system that allows you to build and manage your content.
+
+### All required env file templates have been provided to you. Simply clone them and fill in the required information

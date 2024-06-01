@@ -4,7 +4,7 @@ marp: true
 
 # Supabase
 
-This is simply the entire backend backend infastructure for Fenamnow. This includes the database. The realtime communication and API endpoints
+This is simply the entire backend backend infastructure for Fenamnow. This includes the database. The realtime communication and API endpoints.
 
 ## Database
 
